@@ -1,0 +1,9 @@
+﻿{
+
+	"javascript": [
+		"~/App_Plugins/SimpleTranslation/Controllers/Pairs.js",
+		"~/App_Plugins/SimpleTranslation/Controllers/Proposals.js",
+		"~/App_Plugins/SimpleTranslation/Controllers/Tasks.js"
+	]
+
+}
