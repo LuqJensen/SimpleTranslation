@@ -261,6 +261,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <Content Include="App_Plugins\SimpleTranslation\package.manifest" />
     <None Include="config.json" />
     <None Include="package.json" />
     <None Include="packages.config" />
@@ -273,6 +274,9 @@
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\pairs.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\proposals.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\tasks.html" />
+    <Content Include="App_Plugins\SimpleTranslation\Controllers\pairs.js" />
+    <Content Include="App_Plugins\SimpleTranslation\Controllers\proposals.js" />
+    <Content Include="App_Plugins\SimpleTranslation\Controllers\tasks.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets" Condition="Exists('..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets')" />
