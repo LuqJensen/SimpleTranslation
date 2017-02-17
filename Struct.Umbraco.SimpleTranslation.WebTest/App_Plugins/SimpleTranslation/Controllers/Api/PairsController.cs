@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
+using Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Models;
 using Umbraco.Core.Persistence;
 using Umbraco.Core.Services;
 using Umbraco.Web;
@@ -18,34 +19,36 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
         public object GetTranslatableKeys()
         {
             var db = DatabaseContext.Database;
-            var results = db.Fetch<dynamic>(new Sql().Select("*").From("dbo.cmsDictionary"));
-            var subNodes = results.Where(x => x.parent != null).ToLookup(x => x.parent, x => x);
-            var rootNodes = results.Where(x => x.parent == null);
-            dynamic result = new
-            {
-                children = new Dictionary<dynamic, dynamic>()
-            };
+            var results = db.Fetch<Pair>(new Sql().Select("*").From("dbo.cmsDictionary"));
+            var subNodes = results.Where(x => x.Parent != null).ToLookup(x => x.Parent.Value, x => x);
+            var rootNodes = results.Where(x => x.Parent == null);
+
+            return BuildDictionary(rootNodes, subNodes);
+        }
+
+        private Dictionary<Guid, Pair> BuildDictionary(IEnumerable<Pair> rootNodes, ILookup<Guid, Pair> subNodes)
+        {
+            var nodes = new Dictionary<Guid, Pair>();
 
             foreach (var v in rootNodes)
             {
-                result.children.Add(v.id, v);
+                nodes.Add(v.UniqueId, v);
                 BuildDictionary(v, subNodes);
             }
-            return result;
+            return nodes;
         }
 
-        private void BuildDictionary(dynamic currentNode, ILookup<dynamic, dynamic> subNodes)
+        private void BuildDictionary(Pair currentNode, ILookup<Guid, Pair> subNodes)
         {
-            foreach (var child in subNodes[currentNode.id])
+            var children = subNodes[currentNode.UniqueId];
+            if (children.Any())
             {
-                // Weird issue with .Count and .Any() on IGrouping<dynamic, dynamic>. So iterate once and break instead.
-                currentNode.children = new Dictionary<dynamic, dynamic>();
-                foreach (var v in subNodes[currentNode.id])
+                currentNode.Children = new Dictionary<Guid, Pair>();
+                foreach (var v in children)
                 {
-                    currentNode.children.Add(v.id, v);
+                    currentNode.Children.Add(v.UniqueId, v);
                     BuildDictionary(v, subNodes);
                 }
-                break;
             }
         }
     }
