@@ -20,6 +20,11 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
         {
             var db = DatabaseContext.Database;
             var results = db.Fetch<Pair>(new Sql().Select("*").From("dbo.cmsDictionary"));
+            var resultsLangText = db.Fetch<TranslationText>(new Sql().Select("*").From("dbo.cmsLanguageText")).ToLookup(x => x.UniqueId, x => x);
+            foreach (var v in results)
+            {
+                v.TranslationTexts = resultsLangText[v.UniqueId];
+            }
             var subNodes = results.Where(x => x.Parent != null).ToLookup(x => x.Parent.Value, x => x);
             var rootNodes = results.Where(x => x.Parent == null);
 
