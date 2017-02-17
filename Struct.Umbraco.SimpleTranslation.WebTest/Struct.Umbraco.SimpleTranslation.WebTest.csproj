@@ -381,6 +381,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\PairsController.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\Models\TranslationText.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\Pair.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\SimpleTranslationTreeController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
