@@ -8,6 +8,7 @@ using Umbraco.Core.Persistence.DatabaseAnnotations;
 
 namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Models
 {
+    [TableName("cmsDictionary")]
     public class Pair
     {
         [Column("pk")]
