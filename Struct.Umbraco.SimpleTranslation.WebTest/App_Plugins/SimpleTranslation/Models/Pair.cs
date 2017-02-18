@@ -26,11 +26,5 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
         [Column("key")]
         [JsonProperty("key")]
         public string Key { get; set; }
-
-        [JsonProperty("children")]
-        public Dictionary<Guid, Pair> Children { get; set; }
-
-        [JsonProperty("translationTexts")]
-        public IEnumerable<TranslationText> TranslationTexts { get; set; }
     }
 }

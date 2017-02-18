@@ -19,7 +19,7 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
         public object GetTranslatableKeys()
         {
             var db = DatabaseContext.Database;
-            var results = db.Fetch<Pair>(new Sql().Select("*").From("dbo.cmsDictionary"));
+            var results = db.Fetch<PairTranslations>(new Sql().Select("*").From("dbo.cmsDictionary"));
             var resultsLangText = db.Fetch<TranslationText>(new Sql().Select("*").From("dbo.cmsLanguageText")).ToLookup(x => x.UniqueId, x => x);
             foreach (var v in results)
             {
@@ -31,9 +31,9 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
             return BuildDictionary(rootNodes, subNodes);
         }
 
-        private Dictionary<Guid, Pair> BuildDictionary(IEnumerable<Pair> rootNodes, ILookup<Guid, Pair> subNodes)
+        private Dictionary<Guid, PairTranslations> BuildDictionary(IEnumerable<PairTranslations> rootNodes, ILookup<Guid, PairTranslations> subNodes)
         {
-            var nodes = new Dictionary<Guid, Pair>();
+            var nodes = new Dictionary<Guid, PairTranslations>();
 
             foreach (var v in rootNodes)
             {
@@ -43,12 +43,12 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
             return nodes;
         }
 
-        private void BuildDictionary(Pair currentNode, ILookup<Guid, Pair> subNodes)
+        private void BuildDictionary(PairTranslations currentNode, ILookup<Guid, PairTranslations> subNodes)
         {
             var children = subNodes[currentNode.UniqueId];
             if (children.Any())
             {
-                currentNode.Children = new Dictionary<Guid, Pair>();
+                currentNode.Children = new Dictionary<Guid, PairTranslations>();
                 foreach (var v in children)
                 {
                     currentNode.Children.Add(v.UniqueId, v);
