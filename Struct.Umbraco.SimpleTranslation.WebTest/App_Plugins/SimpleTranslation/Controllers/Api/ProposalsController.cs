@@ -38,5 +38,42 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
             }
             return results;
         }
+
+        [HttpPost]
+        public void AcceptProposal(int id)
+        {
+            var db = DatabaseContext.Database;
+            var proposal = db.FirstOrDefault<TranslationProposal>(new Sql("select * from dbo.simpleTranslationProposals where pk=@tag", new
+            {
+                tag = id
+            }));
+            var existingData = db.FirstOrDefault<TranslationText>(new Sql("select * from dbo.cmsLanguageText where UniqueId=@tag1 and languageId=@tag2", new
+            {
+                tag1 = proposal.UniqueId,
+                tag2 = proposal.LanguageId
+            }));
+
+            if (existingData == null)
+            {
+                var data = new TranslationText
+                {
+                    LangId = proposal.LanguageId,
+                    UniqueId = proposal.UniqueId,
+                    Value = proposal.Value
+                };
+                db.Insert(data);
+            }
+            else
+            {
+                existingData.Value = proposal.Value;
+                db.Update(existingData);
+            }
+
+            db.Delete<TranslationProposal>(new Sql().Where("id=@tag1 and languageId=@tag2", new
+            {
+                tag1 = proposal.UniqueId,
+                tag2 = proposal.LanguageId
+            }));
+        }
     }
 }
