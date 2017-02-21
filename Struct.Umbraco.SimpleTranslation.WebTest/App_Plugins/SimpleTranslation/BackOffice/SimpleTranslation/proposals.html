@@ -12,7 +12,7 @@
     </div>
     <div class="umb-editor-container umb-panel-body umb-scrollable row-fluid">
         <div class="umb-pane">
-            <table class="table">
+            <table id="proposals" class="table">
                 <thead>
                 <tr>
                     <th>Key</th>
@@ -33,8 +33,11 @@
                     <td>{{ y.userName }}</td>
                     <td>{{ y.timestamp | utc | date : 'dd/MM/yy @ HH:mm' }}</td>
                     <td>
-                        <a href="#" ng-click="acceptProposal({{ y.primaryKey }})">
-                            <i class="icon-check" style="color: #46a546;"></i>
+                        <a href="#" ng-click="acceptProposal({{ y }}, {{ x.translationProposals }})">
+                            <i class="icon-check" style="color: #46a546; padding-right: 5px;"></i>
+                        </a>
+                        <a href="#" ng-click="rejectProposal({{ y.primaryKey }})">
+                            <i class="icon-wrong" style="color: red;"></i>
                         </a>
                     </td>
                 </tr>
