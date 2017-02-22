@@ -20,10 +20,46 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
         {
             var db = DatabaseContext.Database;
             var results = db.Fetch<PairTranslations>(new Sql().Select("*").From("dbo.cmsDictionary"));
+
+            var languages = db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage"));
+
             var resultsLangText = db.Fetch<TranslationText>(new Sql().Select("*").From("dbo.cmsLanguageText")).ToLookup(x => x.UniqueId, x => x);
             foreach (var v in results)
             {
-                v.TranslationTexts = resultsLangText[v.UniqueId];
+                v.TranslationTexts = new Dictionary<int, TranslationText>();
+                foreach (var lang in languages)
+                {
+                    bool contains = false;
+                    foreach (var x in resultsLangText[v.UniqueId])
+                    {
+                        if (x.LangId == lang.Id)
+                        {
+                            contains = true;
+                            v.TranslationTexts.Add(x.LangId, x);
+                            break;
+                        }
+                    }
+                    if (!contains)
+                    {
+                        v.TranslationTexts.Add(lang.Id, null);
+                    }
+                }
+//                foreach (var x in resultsLangText[v.UniqueId])
+//                {
+//                    v.TranslationTexts.Add(x.LangId, x.Value);
+//                }
+                //                foreach (var language in languages)
+                //                {
+                //                    foreach (var x in resultsLangText[v.UniqueId])
+                //                    {
+                //                        if (x.LangId == language.Id)
+                //                        {
+                //                            v.TranslationTexts resultsLangText[v.UniqueId]
+                //                        }
+                //                    }
+                //                    if
+                //                    .Contains()
+                //                }
             }
             var subNodes = results.Where(x => x.Parent != null).ToLookup(x => x.Parent.Value, x => x);
             var rootNodes = results.Where(x => x.Parent == null);
@@ -55,6 +91,18 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
                     BuildDictionary(v, subNodes);
                 }
             }
+        }
+
+        public object GetLanguages()
+        {
+            var db = DatabaseContext.Database;
+            var results = db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage"));
+            //            var languages = new Dictionary<int, string>();
+            //            foreach (var language in results)
+            //            {
+            //                languages.Add(language.Id, language.LanguageCultureName);
+
+            return results;
         }
     }
 }
