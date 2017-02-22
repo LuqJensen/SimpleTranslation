@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Http;
 using Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Models;
+using Umbraco.Core.Models;
 using Umbraco.Core.Persistence;
 using Umbraco.Core.Services;
 using Umbraco.Web;
@@ -47,6 +48,23 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
             {
                 tag = id
             }));
+
+            var service = ApplicationContext.Services.LocalizationService;
+            IDictionaryItem idi = service.GetDictionaryItemById(proposal.UniqueId);
+            var translation = idi.Translations.FirstOrDefault(x => x.LanguageId == proposal.LanguageId);
+
+            if (translation == null)
+            {
+                var translations = idi.Translations.ToList();
+                translations.Add(new DictionaryTranslation(service.GetLanguageById(proposal.LanguageId), proposal.Value, proposal.UniqueId));
+                idi.Translations = translations;
+            }
+            else
+            {
+                translation.Value = proposal.Value;
+            }
+            service.Save(idi);
+            /*
             var existingData = db.FirstOrDefault<TranslationText>(new Sql("SELECT * FROM dbo.cmsLanguageText WHERE UniqueId=@tag1 AND languageId=@tag2", new
             {
                 tag1 = proposal.UniqueId,
@@ -68,7 +86,7 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
                 existingData.Value = proposal.Value;
                 db.Update(existingData);
             }
-
+            */
             db.Delete<TranslationProposal>(new Sql().Where("id=@tag1 AND languageId=@tag2", new
             {
                 tag1 = proposal.UniqueId,
