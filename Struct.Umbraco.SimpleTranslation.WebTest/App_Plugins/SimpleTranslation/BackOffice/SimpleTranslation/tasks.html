@@ -1,5 +1,5 @@
 ﻿<div ng-controller="SimpleTranslation.Tasks.Controller">
-    <div class="umb-panel-header">
+    <div class="umb-panel-header umb-editor-header">
         <div class="umb-panel-header-content-wrapper">
             <div class="umb-panel-header-content">
                 <div class="umb-panel-header-left-side">
@@ -10,5 +10,32 @@
             </div>
         </div>
     </div>
+    <div class="umb-editor-container umb-panel-body umb-scrollable row-fluid">
+        <div class="umb-pane">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Language</th>
+                    <th>Latest proposal</th>
+                    <th>Your latest proposal</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="x in data">
+                    <td>{{ x.key }}</td>
+                    <td>{{ x.language }}</td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <a href="#" ng-click="deleteTask({{ x.primaryKey }})">
+                            <i class="icon-wrong" style="color: red;"></i>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-

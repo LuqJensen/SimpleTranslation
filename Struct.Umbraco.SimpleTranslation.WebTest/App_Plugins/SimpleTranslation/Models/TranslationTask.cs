@@ -31,5 +31,9 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
         [ResultColumn]
         [JsonProperty("language")]
         public string Language { get; set; }
+
+        [ResultColumn]
+        [JsonProperty("key")]
+        public string Key { get; set; }
     }
 }
