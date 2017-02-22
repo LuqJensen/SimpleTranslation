@@ -10,7 +10,7 @@
             </div>
         </div>
     </div>
-    <div class="umb-editor-container umb-panel-body umb-scrollable row-fluid" style="height: 700px">
+    <div class="umb-editor-container umb-panel-body umb-scrollable row-fluid" style="height: 90vh;">
         <div class="umb-pane">
             <table class="table">
                 <thead>
@@ -22,17 +22,11 @@
                 <tbody ng-repeat="x in keys">
                 <tr>
                     <td>{{ x.key }}</td>
-                    <td ng-repeat="(key, translation) in x.translationTexts track by $index">
+                    <td ng-repeat="lang in languages">
+                        {{ getTranslation(x,lang.id) }}
                         <div ng-switch="!!translation">
                             <div ng-switch-when="true">
-                                <div ng-switch="!!translation.value">
-                                    <div ng-switch-when="true">
-                                        <i class="icon-check" style="color: #46a546;" title="{{translation.value}}"></i>
-                                    </div>
-                                    <div ng-switch-default>
-                                        <i class="icon-delete" style="color: #ff0000;"></i>
-                                    </div>
-                                </div>
+                                <i class="icon-check" style="color: #46a546;" title="{{ translation }}"></i>
                             </div>
                             <div ng-switch-default>
                                 <i class="icon-delete" style="color: #ff0000;"></i>

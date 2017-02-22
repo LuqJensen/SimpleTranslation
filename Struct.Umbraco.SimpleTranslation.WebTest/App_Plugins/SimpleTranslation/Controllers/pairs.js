@@ -1,6 +1,4 @@
-﻿
-
-var app = angular.module("umbraco");
+﻿var app = angular.module("umbraco");
 
 app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http) {
 
@@ -30,6 +28,15 @@ app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http) {
             angular.forEach(object.children, function(values) {
                 loop(values);
             });
+        }
+    }
+
+    $scope.getTranslation = function (object, langId) {
+        if (object.translationTexts[langId]) {
+            $scope.translation = object.translationTexts[langId].value;
+        }
+        else {
+            $scope.translation = null;
         }
     }
 });
