@@ -26,8 +26,8 @@
                 <tr ng-repeat="x in data">
                     <td>{{ x.key }}</td>
                     <td>{{ x.language }}</td>
-                    <td></td>
-                    <td></td>
+                    <td>{{ x.latestProposal.value }}</td>
+                    <td>{{ x.latestPersonalProposal.value }}</td>
                     <td>
                         <a href="#" ng-click="deleteTask({{ x.primaryKey }})">
                             <i class="icon-wrong" style="color: red;"></i>
