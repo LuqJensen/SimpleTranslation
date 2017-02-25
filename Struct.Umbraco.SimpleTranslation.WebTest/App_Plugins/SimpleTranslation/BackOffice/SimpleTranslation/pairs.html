@@ -7,6 +7,11 @@
                         <div class="umb-panel-header-name">Pairs</div>
                     </div>
                 </div>
+                <div class="btn-toolbar umb-btn-toolbar">
+                    <a class="btn btn-primary btn" ng-click="switchView()">
+                        {{ switchBtnText }}
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -15,21 +20,37 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th>Key</th>
-                    <th ng-repeat="x in languages">{{ x.languageCultureName }}</th>
+                    <th width="300px">Key</th>
+                    <th ng-repeat="x in languages" width="40px">
+                        <a href="#" ng-click="sendToTranslationWholeLanguage( {{x.id}} )" ng-if="taskView" title="Send all keys for {{ x.languageCultureName}} to translation">
+                            <i class="icon-arrow-right" style="color: #46a546;"></i>
+                        </a>
+                        <p ></p>{{ x.languageCultureName }}
+                    </th>
                 </tr>
                 </thead>
                 <tbody ng-repeat="x in keys">
                 <tr>
-                    <td>{{ x.key }}</td>
+                    <td>
+                        <a href="#" ng-click="sendToTranslationAllLanguages( {{x}} )" ng-if="taskView" title="Send {{ x.key}} to translation in all languages">
+                            <i class="icon-arrow-right" style="color: #46a546;"></i>
+                        </a>
+                        {{ x.key }}
+                    </td>
                     <td ng-repeat="lang in languages">
                         {{ getTranslation(x,lang.id) }}
                         <div ng-switch="!!translation">
                             <div ng-switch-when="true">
                                 <i class="icon-check" style="color: #46a546;" title="{{ translation }}"></i>
+                                <a href="#" ng-click="sendToTranslation( {{x}}, {{lang.id}} )" ng-if="taskView" title="Send {{ x.key}} to translation in {{ lang.languageCultureName}}">
+                                    <i class="icon-arrow-right" style="color: #46a546;"></i>
+                                </a>
                             </div>
                             <div ng-switch-default>
                                 <i class="icon-delete" style="color: #ff0000;"></i>
+                                <a href="#" ng-click="sendToTranslation( {{x}}, {{lang.id}} )" ng-if="taskView" title="Send {{ x.key}} to translation in {{ lang.languageCultureName}}">
+                                    <i class="icon-arrow-right" style="color: #46a546;"></i>
+                                </a>
                             </div>
                         </div>
                     </td>

@@ -7,7 +7,6 @@ using System.Web;
 using System.Web.Http;
 using Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Models;
 using Umbraco.Core.Persistence;
-using Umbraco.Core.Services;
 using Umbraco.Web;
 using Umbraco.Web.WebApi;
 
@@ -36,6 +35,105 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
             return BuildDictionary(rootNodes, subNodes);
         }
 
+        [HttpGet]
+        public object GetLanguages()
+        {
+            var db = DatabaseContext.Database;
+            var results = db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage"));
+
+            return results;
+        }
+
+        [HttpPost]
+        public void SendToTranslation(int id, int langId)
+        {
+            var db = DatabaseContext.Database;
+            var languages = db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage"));
+
+            var task = db.FirstOrDefault<Pair>(new Sql("SELECT * FROM dbo.cmsDictionary WHERE pk=@tag", new
+            {
+                tag = id
+            }));
+
+            var existingData = db.FirstOrDefault<TranslationTask>(new Sql("SELECT * FROM dbo.simpleTranslationTasks WHERE id=@tag1 AND languageId=@tag2", new
+            {
+                tag1 = task.UniqueId,
+                tag2 = langId
+            }));
+
+            if (existingData == null)
+            {
+                var data = new TranslationTask
+                {
+                    UniqueId = task.UniqueId,
+                    LanguageId = langId
+                };
+                db.Insert(data);
+            }
+        }
+
+        [HttpPost]
+        public void SendToTranslationAllLanguages(int id)
+        {
+            var db = DatabaseContext.Database;
+            var languages = db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage"));
+
+            var task = db.FirstOrDefault<Pair>(new Sql("SELECT * FROM dbo.cmsDictionary WHERE pk=@tag", new
+            {
+                tag = id
+            }));
+
+            foreach (var language in languages)
+            {
+                var existingData = db.FirstOrDefault<TranslationTask>(new Sql("SELECT * FROM dbo.simpleTranslationTasks WHERE id=@tag1 AND languageId=@tag2", new
+                {
+                    tag1 = task.UniqueId,
+                    tag2 = language.Id
+                }));
+
+                if (existingData == null)
+                {
+                    var data = new TranslationTask
+                    {
+                        UniqueId = task.UniqueId,
+                        LanguageId = language.Id
+                    };
+                    db.Insert(data);
+                }
+            }
+        }
+
+        [HttpPost]
+        public void SendToTranslationWholeLanguage(int id)
+        {
+            var db = DatabaseContext.Database;
+            var keys = db.Fetch<PairTranslations>(new Sql().Select("*").From("dbo.cmsDictionary"));
+
+            foreach (var key in keys)
+            {
+                var task = db.FirstOrDefault<Pair>(new Sql("SELECT * FROM dbo.cmsDictionary WHERE pk=@tag", new
+                {
+                    tag = key.PrimaryKey
+                }));
+
+                var existingData = db.FirstOrDefault<TranslationTask>(new Sql("SELECT * FROM dbo.simpleTranslationTasks WHERE id=@tag1 AND languageId=@tag2", new
+                {
+                    tag1 = task.UniqueId,
+                    tag2 = id
+                }));
+
+                if (existingData == null)
+                {
+                    var data = new TranslationTask
+                    {
+                        UniqueId = task.UniqueId,
+                        LanguageId = id
+                    };
+                    db.Insert(data);
+                }
+            }
+        }
+
         private Dictionary<Guid, PairTranslations> BuildDictionary(IEnumerable<PairTranslations> rootNodes, ILookup<Guid, PairTranslations> subNodes)
         {
             var nodes = new Dictionary<Guid, PairTranslations>();
@@ -60,14 +158,6 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
                     BuildDictionary(v, subNodes);
                 }
             }
-        }
-
-        public object GetLanguages()
-        {
-            var db = DatabaseContext.Database;
-            var results = db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage"));
-
-            return results;
         }
     }
 }
