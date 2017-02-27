@@ -1,20 +1,18 @@
 ﻿var app = angular.module("umbraco");
 
 app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $route) {
-
-    $scope.taskView = false;
-    $scope.switchBtnText = "Translation View: Off";
     getTranslatableKeys();
     getLanguages();
 
     function getTranslatableKeys() {
         $http.get('/umbraco/backoffice/api/Pairs/GetTranslatableKeys').success(function(response) {
-            $scope.data = response;
-
-            $scope.keys = [];
-            for (var object in $scope.data) {
-                loop($scope.data[object]);
+            var keys = [];
+            for (var object in response) {
+                if (response.hasOwnProperty(object)) {
+                    loop(response[object], keys);
+                }
             }
+            $scope.keys = keys;
         });
     }
 
@@ -24,24 +22,13 @@ app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $ro
         });
     }
 
-    function loop(object) {
-        $scope.keys.push(object);
+    function loop(object, keys) {
+        keys.push(object);
         if (object.children) {
             angular.forEach(object.children, function(values) {
-                loop(values);
+                loop(values, keys);
             });
         }
-    }
-
-    $scope.switchView = function() {
-        $scope.taskView = !$scope.taskView;
-        if ($scope.taskView) {
-            $scope.switchBtnText = "Translation View: On";
-        }
-        else {
-            $scope.switchBtnText = "Translation View: Off";
-        }
-        getTranslatableKeys();
     }
 
     $scope.getTranslation = function(object, langId) {
@@ -53,25 +40,21 @@ app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $ro
         }
     }
 
-    $scope.sendToTranslation = function(key, langId) {
+    $scope.sendToTranslation = function(key, lang) {
         event.preventDefault();
 
-        $.post("/umbraco/backoffice/api/Pairs/SendToTranslation?id=" + key.primaryKey + "&langId=" + langId).success(function() {});
+        $.post("/umbraco/backoffice/api/Pairs/SendToTranslation?id=" + key.id + "&langId=" + lang.id).success(function() {});
     }
 
     $scope.sendToTranslationAllLanguages = function(key) {
         event.preventDefault();
 
-        $.post("/umbraco/backoffice/api/Pairs/SendToTranslationAllLanguages?id=" + key.primaryKey).success(function() {});
+        $.post("/umbraco/backoffice/api/Pairs/SendToTranslationAllLanguages?id=" + key.id).success(function() {});
     }
 
-    $scope.sendToTranslationWholeLanguage = function (langId) {
+    $scope.sendToTranslationWholeLanguage = function(langId) {
         event.preventDefault();
 
-        console.log("send to translation");
-        $.post("/umbraco/backoffice/api/Pairs/SendToTranslationWholeLanguage?id=" + langId).success(function() {
-
-            console.log("send to translatiosdsdsn");
-        });
+        $.post("/umbraco/backoffice/api/Pairs/SendToTranslationWholeLanguage?langId=" + langId).success(function() {});
     }
 });

@@ -45,19 +45,13 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
         }
 
         [HttpPost]
-        public void SendToTranslation(int id, int langId)
+        public void SendToTranslation(Guid id, int langId)
         {
             var db = DatabaseContext.Database;
-            var languages = db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage"));
-
-            var task = db.FirstOrDefault<Pair>(new Sql("SELECT * FROM dbo.cmsDictionary WHERE pk=@tag", new
-            {
-                tag = id
-            }));
 
             var existingData = db.FirstOrDefault<TranslationTask>(new Sql("SELECT * FROM dbo.simpleTranslationTasks WHERE id=@tag1 AND languageId=@tag2", new
             {
-                tag1 = task.UniqueId,
+                tag1 = id,
                 tag2 = langId
             }));
 
@@ -65,7 +59,7 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
             {
                 var data = new TranslationTask
                 {
-                    UniqueId = task.UniqueId,
+                    UniqueId = id,
                     LanguageId = langId
                 };
                 db.Insert(data);
@@ -73,21 +67,15 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
         }
 
         [HttpPost]
-        public void SendToTranslationAllLanguages(int id)
+        public void SendToTranslationAllLanguages(Guid id)
         {
             var db = DatabaseContext.Database;
-            var languages = db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage"));
 
-            var task = db.FirstOrDefault<Pair>(new Sql("SELECT * FROM dbo.cmsDictionary WHERE pk=@tag", new
-            {
-                tag = id
-            }));
-
-            foreach (var language in languages)
+            foreach (var language in ApplicationContext.Services.LocalizationService.GetAllLanguages())
             {
                 var existingData = db.FirstOrDefault<TranslationTask>(new Sql("SELECT * FROM dbo.simpleTranslationTasks WHERE id=@tag1 AND languageId=@tag2", new
                 {
-                    tag1 = task.UniqueId,
+                    tag1 = id,
                     tag2 = language.Id
                 }));
 
@@ -95,7 +83,7 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
                 {
                     var data = new TranslationTask
                     {
-                        UniqueId = task.UniqueId,
+                        UniqueId = id,
                         LanguageId = language.Id
                     };
                     db.Insert(data);
@@ -104,30 +92,25 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
         }
 
         [HttpPost]
-        public void SendToTranslationWholeLanguage(int id)
+        public void SendToTranslationWholeLanguage(int langId)
         {
             var db = DatabaseContext.Database;
-            var keys = db.Fetch<PairTranslations>(new Sql().Select("*").From("dbo.cmsDictionary"));
+            var keys = db.Fetch<Pair>(new Sql().Select("id").From("dbo.cmsDictionary"));
 
             foreach (var key in keys)
             {
-                var task = db.FirstOrDefault<Pair>(new Sql("SELECT * FROM dbo.cmsDictionary WHERE pk=@tag", new
-                {
-                    tag = key.PrimaryKey
-                }));
-
                 var existingData = db.FirstOrDefault<TranslationTask>(new Sql("SELECT * FROM dbo.simpleTranslationTasks WHERE id=@tag1 AND languageId=@tag2", new
                 {
-                    tag1 = task.UniqueId,
-                    tag2 = id
+                    tag1 = key.UniqueId,
+                    tag2 = langId
                 }));
 
                 if (existingData == null)
                 {
                     var data = new TranslationTask
                     {
-                        UniqueId = task.UniqueId,
-                        LanguageId = id
+                        UniqueId = key.UniqueId,
+                        LanguageId = langId
                     };
                     db.Insert(data);
                 }
