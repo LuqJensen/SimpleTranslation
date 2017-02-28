@@ -17,6 +17,7 @@
                 <tr>
                     <th>Key</th>
                     <th>Language</th>
+                    <th></th>
                     <th>Latest proposal</th>
                     <th>Your latest proposal</th>
                     <th></th>
@@ -26,6 +27,14 @@
                 <tr ng-repeat="x in data">
                     <td>{{ x.key }}</td>
                     <td>{{ x.language }}</td>
+                    <td>
+                        <div class="input-append">
+                            <input class="span2" type="text" placeholder="Your proposal..." ng-model="x.value"/>
+                            <button class="btn" ng-click="createProposal($event)" title="Create proposal for {{ x.key }} in {{ x.language }}">
+                                <i class="icon-arrow-right" style="color: #46a546;"></i>
+                            </button>
+                        </div>
+                    </td>
                     <td>{{ x.latestProposal.value }}</td>
                     <td>{{ x.latestPersonalProposal.value }}</td>
                     <td>

@@ -386,6 +386,7 @@
     <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\TasksController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\PairProposals.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\PairTranslations.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\Models\TaskProposal.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\TranslationTask.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\TranslationProposal.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\TranslationText.cs" />

@@ -25,4 +25,14 @@
             }
         });
     }
+
+    $scope.createProposal = function() {
+        event.preventDefault();
+        var task = angular.element(event.srcElement).scope().x;
+        console.log(task);
+        $http.post("/umbraco/backoffice/api/Tasks/CreateProposal", task).success(function ()
+        {
+            getTranslationTasks();
+        });
+    }
 });

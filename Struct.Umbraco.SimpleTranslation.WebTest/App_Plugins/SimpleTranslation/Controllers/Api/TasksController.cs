@@ -77,5 +77,20 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
                 tag = id
             }));
         }
+
+        [HttpPost]
+        public void CreateProposal(TaskProposal proposal)
+        {
+            var db = DatabaseContext.Database;
+            db.Insert("dbo.simpleTranslationProposals", "pk", new TranslationProposal
+            {
+                LanguageId = proposal.LanguageId,
+                UniqueId = proposal.UniqueId,
+                UserId = UmbracoContext.Security.GetUserId(),
+                Value = proposal.Value,
+                Timestamp = DateTime.UtcNow
+            });
+            return;
+        }
     }
 }
