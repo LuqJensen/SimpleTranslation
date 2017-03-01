@@ -64,30 +64,14 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
                 translation.Value = proposal.Value;
             }
             service.Save(idi);
-            /*
-            var existingData = db.FirstOrDefault<TranslationText>(new Sql("SELECT * FROM dbo.cmsLanguageText WHERE UniqueId=@tag1 AND languageId=@tag2", new
+
+            db.Delete<TranslationProposal>(new Sql().Where("id=@tag1 AND languageId=@tag2", new
             {
                 tag1 = proposal.UniqueId,
                 tag2 = proposal.LanguageId
             }));
 
-            if (existingData == null)
-            {
-                var data = new TranslationText
-                {
-                    LangId = proposal.LanguageId,
-                    UniqueId = proposal.UniqueId,
-                    Value = proposal.Value
-                };
-                db.Insert(data);
-            }
-            else
-            {
-                existingData.Value = proposal.Value;
-                db.Update(existingData);
-            }
-            */
-            db.Delete<TranslationProposal>(new Sql().Where("id=@tag1 AND languageId=@tag2", new
+            db.Delete<TranslationTask>(new Sql().Where("id=@tag1 AND languageId=@tag2", new
             {
                 tag1 = proposal.UniqueId,
                 tag2 = proposal.LanguageId

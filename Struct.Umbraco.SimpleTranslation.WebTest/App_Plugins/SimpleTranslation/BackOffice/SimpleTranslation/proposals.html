@@ -10,7 +10,7 @@
             </div>
         </div>
     </div>
-    <div class="umb-editor-container umb-panel-body umb-scrollable row-fluid">
+    <div class="umb-editor-container umb-panel-body umb-scrollable row-fluid scrollable">
         <div class="umb-pane">
             <table class="table">
                 <thead>
@@ -24,7 +24,7 @@
                 </thead>
                 <tbody ng-repeat="x in data">
                 <tr>
-                    <td>{{ x.key }}</td>
+                    <td colspan="6">{{ x.key }}</td>
                 </tr>
                 <tr ng-repeat="y in x.translationProposals">
                     <td></td>
@@ -33,11 +33,11 @@
                     <td>{{ y.userName }}</td>
                     <td>{{ y.timestamp | utc | date : 'dd/MM/yy @ HH:mm' }}</td>
                     <td>
-                        <a href="#" ng-click="acceptProposal({{ y }}, {{ x.translationProposals }})">
-                            <i class="icon-check" style="color: #46a546; padding-right: 5px;"></i>
+                        <a href="#" ng-click="acceptProposal(y, x.translationProposals)">
+                            <i class="icon-check icon-green icon-pad-right"></i>
                         </a>
-                        <a href="#" ng-click="rejectProposal({{ y.primaryKey }})">
-                            <i class="icon-wrong" style="color: red;"></i>
+                        <a href="#" ng-click="rejectProposal(y.primaryKey)">
+                            <i class="icon-wrong icon-red"></i>
                         </a>
                     </td>
                 </tr>
