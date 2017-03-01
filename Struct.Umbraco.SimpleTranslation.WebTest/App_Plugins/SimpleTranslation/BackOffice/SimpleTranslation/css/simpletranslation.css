@@ -1,0 +1,13 @@
+﻿div.input-append button {
+    padding-bottom: 3px;
+    padding-top: 3px;
+    height: 30px;
+}
+
+i.icon-red { color: red; }
+
+i.icon-green { color: #46a546; }
+
+i.icon-pad-right { padding-right: 5px; }
+
+div.scrollable { height: 90vh; }

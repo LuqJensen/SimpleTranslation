@@ -10,7 +10,7 @@
             </div>
         </div>
     </div>
-    <div class="umb-editor-container umb-panel-body umb-scrollable row-fluid">
+    <div class="umb-editor-container umb-panel-body umb-scrollable row-fluid scrollable">
         <div class="umb-pane">
             <table class="table">
                 <thead>
@@ -28,18 +28,20 @@
                     <td>{{ x.key }}</td>
                     <td>{{ x.language }}</td>
                     <td>
-                        <div class="input-append">
-                            <input class="span2" type="text" placeholder="Your proposal..." ng-model="x.value"/>
-                            <button class="btn" ng-click="createProposal($event)" title="Create proposal for {{ x.key }} in {{ x.language }}">
-                                <i class="icon-arrow-right" style="color: #46a546;"></i>
-                            </button>
-                        </div>
+                        <form ng-submit="createProposal(x)">
+                            <div class="input-append">
+                                <input type="text" placeholder="Your proposal..." ng-model="x.value"/>
+                                <button type="submit" title="Create proposal for {{ x.key }} in {{ x.language }}">
+                                    <i class="icon-arrow-right icon-green"></i>
+                                </button>
+                            </div>
+                        </form>
                     </td>
                     <td>{{ x.latestProposal.value }}</td>
                     <td>{{ x.latestPersonalProposal.value }}</td>
                     <td>
-                        <a href="#" ng-click="deleteTask({{ x.primaryKey }})">
-                            <i class="icon-wrong" style="color: red;"></i>
+                        <a href="#" ng-click="deleteTask(x.primaryKey)">
+                            <i class="icon-wrong icon-red"></i>
                         </a>
                     </td>
                 </tr>

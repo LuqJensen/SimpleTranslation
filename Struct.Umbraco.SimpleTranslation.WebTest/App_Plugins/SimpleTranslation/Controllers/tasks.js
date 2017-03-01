@@ -26,12 +26,11 @@
         });
     }
 
-    $scope.createProposal = function() {
+    $scope.createProposal = function(task) {
         event.preventDefault();
-        var task = angular.element(event.srcElement).scope().x;
-        console.log(task);
-        $http.post("/umbraco/backoffice/api/Tasks/CreateProposal", task).success(function ()
-        {
+
+        // jquery.post drops the value of the task's id (Guid) causing it to default to 0000-000... angulars http.post works correctly here...
+        $http.post("/umbraco/backoffice/api/Tasks/CreateProposal", task).success(function() {
             getTranslationTasks();
         });
     }
