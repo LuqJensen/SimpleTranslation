@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Http;
 using Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Models;
+using Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Utility;
 using Umbraco.Core.Models;
 using Umbraco.Core.Persistence;
 using Umbraco.Core.Services;
@@ -16,6 +17,11 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
 {
     public class ProposalsController : UmbracoAuthorizedApiController
     {
+        private bool CanEdit()
+        {
+            return SecurityUtility.IsEditor(UmbracoContext.Security.CurrentUser);
+        }
+
         [HttpGet]
         public object GetTranslationProposals()
         {
@@ -43,6 +49,9 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
         [HttpPost]
         public void AcceptProposal(int id)
         {
+            if (!CanEdit())
+                return;
+
             var db = DatabaseContext.Database;
             var proposal = db.FirstOrDefault<TranslationProposal>(new Sql("SELECT * FROM dbo.simpleTranslationProposals WHERE pk=@tag", new
             {
@@ -81,6 +90,9 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
         [HttpPost]
         public void RejectProposal(int id)
         {
+            if (!CanEdit())
+                return;
+
             var db = DatabaseContext.Database;
             db.Delete<TranslationProposal>(new Sql().Where("pk=@tag", new
             {

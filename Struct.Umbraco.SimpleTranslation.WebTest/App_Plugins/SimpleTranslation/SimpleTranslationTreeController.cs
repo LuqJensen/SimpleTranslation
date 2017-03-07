@@ -5,6 +5,7 @@ using System.Net.Http.Formatting;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Utility;
 using Umbraco.Core.Security;
 using Umbraco.Web.Models.Trees;
 using Umbraco.Web.Mvc;
@@ -34,16 +35,11 @@ namespace Struct.Umbraco.SimpleTranslation.App_Plugins.SimpleTranslation
             if (id == "-1")
             {
                 nodes.Add(CreateTreeNode("1", id, queryStrings, "Translation Tasks", "icon-folder", CreateRoute("tasks")));
-                nodes.Add(CreateTreeNode("2", id, queryStrings, "Translation Proposals", "icon-folder", CreateRoute("proposals")));
 
-                var user = UmbracoContext.Security.CurrentUser;
-                if (user != null)
+                if (SecurityUtility.IsEditor(UmbracoContext.Security.CurrentUser))
                 {
-                    //var permissions = user.UserType.Permissions; // TODO: investigate whether Permissions is more suitable for authorization.
-                    if (user.UserType.Alias == "admin" || user.UserType.Alias == "editor")
-                    {
-                        nodes.Add(CreateTreeNode("3", id, queryStrings, "Translatable strings", "icon-folder", CreateRoute("pairs")));
-                    }
+                    nodes.Add(CreateTreeNode("2", id, queryStrings, "Translation Proposals", "icon-folder", CreateRoute("proposals")));
+                    nodes.Add(CreateTreeNode("3", id, queryStrings, "Translatable strings", "icon-folder", CreateRoute("pairs")));
                 }
             }
 

@@ -396,6 +396,7 @@
     <Compile Include="App_Plugins\SimpleTranslation\Models\User.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\SimpleTranslationTreeController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Startup.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\Utility\SecurityUtility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

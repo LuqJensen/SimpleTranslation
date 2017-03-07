@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Http;
 using Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Models;
+using Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Utility;
 using Umbraco.Core;
 using Umbraco.Core.Persistence;
 using Umbraco.Core.Models;
@@ -13,6 +14,11 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
 {
     public class TasksController : UmbracoAuthorizedApiController
     {
+        private bool CanDiscard()
+        {
+            return SecurityUtility.IsEditor(UmbracoContext.Security.CurrentUser);
+        }
+
         [HttpGet]
         public object GetTranslationTasks()
         {
@@ -65,12 +71,19 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
                 v.LatestPersonalProposal = p;
             }
 
-            return tasks;
+            return new
+            {
+                tasks,
+                canDiscard = CanDiscard()
+            };
         }
 
         [HttpPost]
         public void DeleteTask(int id)
         {
+            if (!CanDiscard())
+                return;
+
             var db = DatabaseContext.Database;
             db.Delete<TranslationTask>(new Sql().Where("pk=@tag", new
             {
@@ -90,7 +103,6 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
                 Value = proposal.Value,
                 Timestamp = DateTime.UtcNow
             });
-            return;
         }
     }
 }

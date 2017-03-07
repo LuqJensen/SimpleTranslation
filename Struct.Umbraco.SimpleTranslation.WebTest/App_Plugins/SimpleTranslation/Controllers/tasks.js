@@ -4,7 +4,8 @@
         $.get('/umbraco/backoffice/api/Tasks/GetTranslationTasks').success(function(response) {
             // Instruct Angular to execute this on next digest. Workaround for Angular not updating regularly when not having focus due to dialogs.
             $timeout(function() {
-                $scope.data = response;
+                $scope.data = response.tasks;
+                $scope.canDiscard = response.canDiscard;
             });
         });
     }

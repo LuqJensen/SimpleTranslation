@@ -20,7 +20,7 @@
                     <th></th>
                     <th>Latest proposal</th>
                     <th>Your latest proposal</th>
-                    <th></th>
+                    <th ng-show="canDiscard"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -39,7 +39,7 @@
                     </td>
                     <td>{{ x.latestProposal.value }}</td>
                     <td>{{ x.latestPersonalProposal.value }}</td>
-                    <td>
+                    <td ng-show="canDiscard">
                         <a href="#" ng-click="deleteTask(x.primaryKey)">
                             <i class="icon-wrong icon-red"></i>
                         </a>
