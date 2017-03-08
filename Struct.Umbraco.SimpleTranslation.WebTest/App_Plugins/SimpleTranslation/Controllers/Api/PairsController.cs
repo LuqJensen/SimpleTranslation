@@ -31,7 +31,6 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
             }
             var subNodes = results.Where(x => x.Parent != null).ToLookup(x => x.Parent.Value, x => x);
             var rootNodes = results.Where(x => x.Parent == null);
-
             return BuildDictionary(rootNodes, subNodes);
         }
 
@@ -40,8 +39,17 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
         {
             var db = DatabaseContext.Database;
             var results = db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage"));
-
             return results;
+        }
+
+
+        [HttpGet]
+        public object GetTranslationTasks()
+        {
+            var db = DatabaseContext.Database;
+            var tasks = db.Fetch<TranslationTask>(new Sql().Select("*").From("dbo.simpleTranslationTasks"));
+
+            return tasks;
         }
 
         [HttpPost]
@@ -63,31 +71,6 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
                     LanguageId = langId
                 };
                 db.Insert(data);
-            }
-        }
-
-        [HttpPost]
-        public void SendToTranslationAllLanguages(Guid id)
-        {
-            var db = DatabaseContext.Database;
-
-            foreach (var language in ApplicationContext.Services.LocalizationService.GetAllLanguages())
-            {
-                var existingData = db.FirstOrDefault<TranslationTask>(new Sql("SELECT * FROM dbo.simpleTranslationTasks WHERE id=@tag1 AND languageId=@tag2", new
-                {
-                    tag1 = id,
-                    tag2 = language.Id
-                }));
-
-                if (existingData == null)
-                {
-                    var data = new TranslationTask
-                    {
-                        UniqueId = id,
-                        LanguageId = language.Id
-                    };
-                    db.Insert(data);
-                }
             }
         }
 

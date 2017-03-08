@@ -7,10 +7,13 @@
                         <div class="umb-panel-header-name">Pairs</div>
                     </div>
                 </div>
+                <div class="btn-toolbar umb-btn-toolbar">
+                    <a class="btn btn-primary btn" ng-click="sendToTranslation()">Send To Translation</a>
+                </div>
             </div>
         </div>
     </div>
-    <div class="umb-editor-container umb-panel-body umb-scrollable row-fluid" style="height: 90vh;">
+    <div class="umb-editor-container umb-panel-body umb-scrollable row-fluid scrollable">
         <div class="umb-pane">
             <table class="table">
                 <thead>
@@ -27,25 +30,18 @@
                 <tbody ng-repeat="x in keys">
                 <tr>
                     <td>
-                        <a href="#" ng-click="sendToTranslationAllLanguages( {{x}} )" title="Send {{ x.key}} to translation in all languages">
-                            <i class="icon-arrow-right" style="color: #46a546;"></i>
-                        </a>
-                        {{ x.key }}
+                        <label><input type="checkbox" ng-model="master" ng-change="toggleSelectionKey(x,master)">{{ x.key }}</label>
                     </td>
                     <td ng-repeat="lang in languages">
                         {{ getTranslation(x,lang.id) }}
                         <div ng-switch="!!translation">
                             <div ng-switch-when="true">
                                 <i class="icon-check" style="color: #46a546;" title="{{ translation }}"></i>
-                                <a href="#" ng-click="sendToTranslation( {{x}}, {{lang}} )" title="Send {{ x.key}} to translation in {{ lang.languageCultureName}}">
-                                    <i class="icon-arrow-right" style="color: #46a546;"></i>
-                                </a>
+                                <input type="checkbox" ng-change="toggleSelection(x,lang.id)" ng-model="master" ng-if="!isTask(x,lang.id)">
                             </div>
                             <div ng-switch-default>
                                 <i class="icon-delete" style="color: #ff0000;"></i>
-                                <a href="#" ng-click="sendToTranslation( {{x}}, {{lang}} )" title="Send {{ x.key}} to translation in {{ lang.languageCultureName}}">
-                                    <i class="icon-arrow-right" style="color: #46a546;"></i>
-                                </a>
+                                <input type="checkbox" ng-change="toggleSelection(x,lang.id)" ng-model="master" ng-if="!isTask(x,lang.id)">
                             </div>
                         </div>
                     </td>
