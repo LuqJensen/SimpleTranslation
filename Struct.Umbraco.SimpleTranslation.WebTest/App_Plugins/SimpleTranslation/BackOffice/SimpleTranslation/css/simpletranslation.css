@@ -11,3 +11,5 @@ i.icon-green { color: #46a546; }
 i.icon-pad-right { padding-right: 5px; }
 
 div.scrollable { height: 90vh; }
+
+a.link { color: blue;}

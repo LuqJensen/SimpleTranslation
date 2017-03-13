@@ -1,4 +1,7 @@
-﻿angular.module("umbraco").controller("SimpleTranslation.Tasks.Controller", function($scope, $http, $timeout) {
+﻿var app = angular.module("umbraco");
+
+app.controller("SimpleTranslation.Tasks.Controller", function ($scope, $http, $timeout)
+{
     function getTranslationTasks() {
         // Use jquery.post and jquery.get over Angular's http.post and http.get as these will wait for Angular to receive focus after dialogs.
         $.get('/umbraco/backoffice/api/Tasks/GetTranslationTasks').success(function(response) {
@@ -35,4 +38,30 @@
             getTranslationTasks();
         });
     }
+
+    $scope.getProposalsForTask = function(id, languageId)
+    {
+        event.preventDefault();
+
+        $http.get("/umbraco/backoffice/api/Tasks/GetProposalsForTask?id=" + id + "&languageId=" + languageId).success(function(response) {
+            console.log(response);
+        });
+    }
+});
+
+// Umbraco 7.5 uses Angular 1.1.5. Better built-in filters were introduced later http://stackoverflow.com/a/29675847/5552144
+app.filter('utc', function ()
+{
+    return function (val) {
+        if (!val)
+            return null;
+
+        var date = new Date(val);
+        return new Date(date.getUTCFullYear(),
+            date.getUTCMonth(),
+            date.getUTCDate(),
+            date.getUTCHours(),
+            date.getUTCMinutes(),
+            date.getUTCSeconds());
+    };
 });
