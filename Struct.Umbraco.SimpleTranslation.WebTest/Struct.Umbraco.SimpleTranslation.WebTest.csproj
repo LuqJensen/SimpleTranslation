@@ -309,9 +309,11 @@
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\pairs.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\proposals.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\tasks.html" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\userLanguages.html" />
     <Content Include="App_Plugins\SimpleTranslation\Controllers\Pairs.js" />
     <Content Include="App_Plugins\SimpleTranslation\Controllers\Proposals.js" />
     <Content Include="App_Plugins\SimpleTranslation\Controllers\Tasks.js" />
+    <Content Include="App_Plugins\SimpleTranslation\Controllers\UserLanguages.js" />
     <Content Include="packages.config" />
     <Content Include="config\imageprocessor\security.config" />
     <Content Include="config\imageprocessor\processing.config" />
@@ -385,6 +387,7 @@
     <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\ProposalsController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\PairsController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\TasksController.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\UserLanguagesController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\PairProposals.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\PairTranslations.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\TaskProposal.cs" />
@@ -394,6 +397,9 @@
     <Compile Include="App_Plugins\SimpleTranslation\Models\Pair.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\Language.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\User.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\Models\UserLanguage.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\Models\UserLanguages.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\SimpleTranslationUsersTreeController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\SimpleTranslationTreeController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Startup.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Utility\SecurityUtility.cs" />

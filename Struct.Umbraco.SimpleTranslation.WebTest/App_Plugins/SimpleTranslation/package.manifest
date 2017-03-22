@@ -3,7 +3,8 @@
 	"javascript": [
 		"~/App_Plugins/SimpleTranslation/Controllers/Pairs.js",
 		"~/App_Plugins/SimpleTranslation/Controllers/Proposals.js",
-		"~/App_Plugins/SimpleTranslation/Controllers/Tasks.js",
+    "~/App_Plugins/SimpleTranslation/Controllers/Tasks.js",
+    "~/App_Plugins/SimpleTranslation/Controllers/userLanguages.js",
 		"~/App_Plugins/SimpleTranslation/BackOffice/SimpleTranslation/js/bootbox.min.js"
 	],
 	"css": [
