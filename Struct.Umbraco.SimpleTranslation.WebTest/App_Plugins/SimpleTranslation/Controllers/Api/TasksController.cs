@@ -23,10 +23,14 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
         public object GetTranslationTasks()
         {
             var db = DatabaseContext.Database;
+
             var tasks = db.Fetch<TranslationTask>(new Sql()
-                    .Select("t.*, l.languageCultureName AS language, d.[key] AS [key]")
-                    .From("dbo.simpleTranslationTasks t LEFT OUTER JOIN dbo.umbracoLanguage l ON t.languageId=l.id LEFT OUTER JOIN dbo.cmsDictionary d ON t.id=d.id"))
-                .ToList();
+                .Select("t.*, l.languageCultureName AS language, d.[key] AS [key]")
+                .From("dbo.simpleTranslationTasks t LEFT OUTER JOIN dbo.umbracoLanguage l ON t.languageId=l.id LEFT OUTER JOIN dbo.cmsDictionary d ON t.id=d.id")
+                .Where("t.languageId IN (select languageId from dbo.simpleTranslationUserLanguages where id=@tag)", new
+                {
+                    tag = UmbracoContext.Security.GetUserId()
+                }));
 
             var latestPersonalProposals = db.Fetch<TranslationProposal>(
                 new Sql("select p1.* from dbo.simpleTranslationProposals p1 INNER JOIN" +
