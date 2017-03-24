@@ -9,7 +9,6 @@ using Umbraco.Core.Persistence.DatabaseAnnotations;
 namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Models
 {
     [TableName("simpleTranslationUserLanguages")]
-    [ExplicitColumns]
     [PrimaryKey("pk", autoIncrement = true)]
     public class UserLanguage
     {

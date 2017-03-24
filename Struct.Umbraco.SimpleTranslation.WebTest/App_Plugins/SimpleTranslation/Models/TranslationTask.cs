@@ -10,7 +10,6 @@ using Umbraco.Core.Persistence.DatabaseAnnotations;
 namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Models
 {
     [TableName("simpleTranslationTasks")]
-    [ExplicitColumns]
     [PrimaryKey("pk", autoIncrement = true)]
     public class TranslationTask
     {
@@ -37,9 +36,11 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
         [JsonProperty("key")]
         public string Key { get; set; }
 
+        [Ignore]
         [JsonProperty("latestPersonalProposal")]
         public TranslationProposal LatestPersonalProposal { get; set; }
 
+        [Ignore]
         [JsonProperty("latestProposal")]
         public TranslationProposal LatestProposal { get; set; }
     }
