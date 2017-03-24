@@ -24,20 +24,26 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
         {
             var db = DatabaseContext.Database;
 
-            var tasks = db.Fetch<TranslationTask>(new Sql()
+            var tasksQuery = new Sql()
                 .Select("t.*, l.languageCultureName AS language, d.[key] AS [key]")
-                .From("dbo.simpleTranslationTasks t LEFT OUTER JOIN dbo.umbracoLanguage l ON t.languageId=l.id LEFT OUTER JOIN dbo.cmsDictionary d ON t.id=d.id")
-                .Where("t.languageId IN (select languageId from dbo.simpleTranslationUserLanguages where id=@tag)", new
+                .From("dbo.simpleTranslationTasks t LEFT OUTER JOIN dbo.umbracoLanguage l ON t.languageId=l.id LEFT OUTER JOIN dbo.cmsDictionary d ON t.id=d.id");
+
+            if (!CanDiscard()) // Only translators are limited to languages they are responsible for. Administrators and Editors can view tasks for all languages.
+            {
+                tasksQuery = tasksQuery.Where("t.languageId IN (select languageId from dbo.simpleTranslationUserLanguages where id=@tag)", new
                 {
                     tag = UmbracoContext.Security.GetUserId()
-                }));
+                });
+            }
+
+            var tasks = db.Fetch<TranslationTask>(tasksQuery);
 
             var latestPersonalProposals = db.Fetch<TranslationProposal>(
                 new Sql("select p1.* from dbo.simpleTranslationProposals p1 INNER JOIN" +
                         "(select MAX(pk) AS pk, id, languageId from dbo.simpleTranslationProposals where userId=@userId GROUP BY id, languageId)" +
                         "AS p2 ON p1.pk=p2.pk", new
                 {
-                    userId = UmbracoContext.Security.CurrentUser.Id
+                    userId = UmbracoContext.Security.GetUserId()
                 })).ToDictionary(x => new
             {
                 x.UniqueId,
