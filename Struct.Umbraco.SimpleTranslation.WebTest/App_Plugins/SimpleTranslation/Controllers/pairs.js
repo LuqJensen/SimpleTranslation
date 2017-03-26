@@ -1,6 +1,6 @@
 ﻿var app = angular.module("umbraco");
 
-app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http) {
+app.controller("SimpleTranslation.Pairs.Controller", function ($scope, $http, $timeout) {
     getTranslatableKeys();
     getLanguages();
     getTranslationTasks();
@@ -70,12 +70,21 @@ app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http) {
                 langId: task.langId
             });
         });
+        sendMessage("Selected keys has been send to translation");
     }
 
     $scope.sendToTranslationWholeLanguage = function(langId) {
         event.preventDefault();
 
-        $.post("/umbraco/backoffice/api/Pairs/SendToTranslationWholeLanguage?langId=" + langId).success(function() {});
+        $.post("/umbraco/backoffice/api/Pairs/SendToTranslationWholeLanguage?langId=" + langId).success(function () {
+        });
+        getTranslationTasks();
+        sendMessage("Keys for the language has been send to translation");
+    }
+
+    function sendMessage(message) {
+        $scope.sendMessage = message;
+        $timeout(function () { $scope.sendMessage = ""; }, 3000);
     }
 
     $scope.selection = [];

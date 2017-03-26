@@ -8,7 +8,10 @@
                     </div>
                 </div>
                 <div class="btn-toolbar umb-btn-toolbar">
-                    <a class="btn btn-primary btn" ng-click="sendToTranslation()">Send To Translation</a>
+                    <div class="message">
+                        <span>{{ sendMessage }}</span>
+                        <a class="btn btn-primary btn" ng-click="sendToTranslation()">Send To Translation</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -30,7 +33,7 @@
                 <tbody ng-repeat="x in keys">
                 <tr>
                     <td>
-                        <label><input type="checkbox" ng-model="master" ng-change="toggleSelectionKey(x,master)">{{ x.key }}</label>
+                        <label><input type="checkbox" ng-model="master" ng-change="toggleSelectionKey(x,master)"> {{ x.key }}</label>
                     </td>
                     <td ng-repeat="lang in languages">
                         {{ getTranslation(x,lang.id) }}

@@ -7,8 +7,9 @@
     "~/App_Plugins/SimpleTranslation/Controllers/userLanguages.js",
 		"~/App_Plugins/SimpleTranslation/BackOffice/SimpleTranslation/js/bootbox.min.js"
 	],
-	"css": [
-		"~/App_Plugins/SimpleTranslation/BackOffice/SimpleTranslation/css/simpletranslation.css"
-	]
+  "css": [
+    "~/App_Plugins/SimpleTranslation/BackOffice/SimpleTranslation/css/simpletranslation.css",
+    "~/App_Plugins/SimpleTranslation/BackOffice/SimpleTranslation/css/style.css"
+  ]
 
 }

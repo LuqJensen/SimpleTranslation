@@ -1,6 +1,6 @@
 ﻿var app = angular.module("umbraco");
 
-app.controller("SimpleTranslation.UserLanguages.Controller", function($scope, $http, $routeParams) {
+app.controller("SimpleTranslation.UserLanguages.Controller", function($scope, $http, $routeParams, $timeout) {
     getUser();
     getLanguages();
 
@@ -24,9 +24,15 @@ app.controller("SimpleTranslation.UserLanguages.Controller", function($scope, $h
         angular.forEach($scope.removeSelection, function(langId) {
             $.post("/umbraco/backoffice/api/UserLanguages/RemoveLanguage?userId=" + $scope.user.id + "&langId=" + langId).success(function () { });
         });
+        saveMessage("Saved");
         getUser();
         $scope.addSelection = [];
         $scope.removeSelection = [];
+    }
+
+    function saveMessage(message) {
+        $scope.saveMessage = message;
+        $timeout(function () { $scope.saveMessage = ""; }, 3000);
     }
 
     $scope.addSelection = [];

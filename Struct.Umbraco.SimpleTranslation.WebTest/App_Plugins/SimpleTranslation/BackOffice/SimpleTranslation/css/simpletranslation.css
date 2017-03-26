@@ -13,3 +13,9 @@ i.icon-pad-right { padding-right: 5px; }
 div.scrollable { height: 90vh; }
 
 a.link { color: blue;}
+
+.message {
+  font-size: 14px;
+  font-weight: bold;
+  text-align: right;
+}
