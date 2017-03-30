@@ -9,7 +9,7 @@ using Umbraco.Web.WebApi;
 
 namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Controllers.Api
 {
-    public class UserLanguagesController : UmbracoAuthorizedApiController
+    public class userSettingsController : UmbracoAuthorizedApiController
     {
         [HttpGet]
         public List<User> GetTranslationUsers()
@@ -52,6 +52,18 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
             return results;
         }
 
+        [HttpGet]
+        public object GetRole(int id)
+        {
+            var db = DatabaseContext.Database;
+            var user = db.FirstOrDefault<UserRole>(new Sql().Select("*").From("dbo.simpleTranslationUserRoles").Where("id=@tag", new
+            {
+                tag = id
+            }));
+
+            return user?.Role ?? 0;
+        }
+
         [HttpPost]
         public void AddLanguage(int userId, int langId)
         {
@@ -91,6 +103,31 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
                 {
                     tag = existingData.PrimaryKey
                 }));
+            }
+        }
+
+        [HttpPost]
+        public void SetRole(int userId, int roleId)
+        {
+            var db = DatabaseContext.Database;
+            var existingData = db.FirstOrDefault<UserRole>(new Sql("SELECT * FROM dbo.simpleTranslationUserRoles WHERE id=@tag", new
+            {
+                tag = userId,
+            }));
+
+            if (existingData != null)
+            {
+                existingData.Role = roleId;
+                db.Save(existingData);
+            }
+            else
+            {
+                var data = new UserRole()
+                {
+                    Id = userId,
+                    Role = roleId
+                };
+                db.Insert(data);
             }
         }
     }

@@ -27,6 +27,10 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
             {
                 schema.CreateTable<UserLanguage>(false);
             }
+            if (!schema.TableExist("simpleTranslationUserRoles"))
+            {
+                schema.CreateTable<UserRole>(false);
+            }
         }
     }
 }

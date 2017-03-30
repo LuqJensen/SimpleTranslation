@@ -23,7 +23,7 @@ namespace Struct.Umbraco.SimpleTranslation.App_Plugins.SimpleTranslation
         private const string TREE_ALIAS = "simpletranslation";
         private const string TREE_ROOT_TITLE = "SimpleTranslations";
 
-        private UserLanguagesController usc = new UserLanguagesController();
+        private userSettingsController usc = new userSettingsController();
 
         private string CreateRoute(string subnodeAlias, int id)
         {
@@ -39,7 +39,7 @@ namespace Struct.Umbraco.SimpleTranslation.App_Plugins.SimpleTranslation
             {
                 if (id == "-1")
                 {
-                    nodes.Add(CreateTreeNode("nodeId", id, queryStrings, user.UserName, "icon-user", CreateRoute("userLanguages", user.Id)));
+                    nodes.Add(CreateTreeNode("nodeId", id, queryStrings, user.UserName, "icon-user", CreateRoute("userSettings", user.Id)));
                 }
                 nodeId++;
             }
