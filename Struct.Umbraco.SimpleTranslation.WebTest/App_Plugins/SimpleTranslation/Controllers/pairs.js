@@ -1,6 +1,6 @@
 ﻿var app = angular.module("umbraco");
 
-app.controller("SimpleTranslation.Pairs.Controller", function ($scope, $http, $timeout) {
+app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $timeout) {
     getTranslatableKeys();
     getLanguages();
     getTranslationTasks();
@@ -13,7 +13,8 @@ app.controller("SimpleTranslation.Pairs.Controller", function ($scope, $http, $t
                     loop(response[object], keys);
                 }
             }
-            $scope.keys = keys;
+            $scope.allKeys = keys;
+            $scope.showKeys = keys;
         });
     }
 
@@ -46,6 +47,36 @@ app.controller("SimpleTranslation.Pairs.Controller", function ($scope, $http, $t
         });
     }
 
+    $scope.filter = function() {
+        if ($scope.filterString.length === 0) {
+            $scope.showKeys = $scope.allKeys;
+        }
+        else {
+            $scope.showKeys = [];
+            angular.forEach($scope.allKeys, function(key) {
+                if (checkContains(key)) {
+                    $scope.showKeys.push(key);
+                }
+            });
+        }
+
+    }
+
+    function checkContains(key) {
+        if (key.key.toLowerCase().search($scope.filterString.toLowerCase()) !== -1) {
+            return true;
+        }
+
+        var contains = false;
+        angular.forEach(key.translationTexts, function(translation) {
+            if (translation.value.toLowerCase().search($scope.filterString.toLowerCase()) !== -1) {
+                contains = true;
+                return;
+            }
+        });
+        return contains;
+    }
+
     $scope.isTask = function(key, langId) {
         return $scope.tasks.some(function(e) {
             return e.keyId === key.id && e.langId === langId;
@@ -76,15 +107,14 @@ app.controller("SimpleTranslation.Pairs.Controller", function ($scope, $http, $t
     $scope.sendToTranslationWholeLanguage = function(langId) {
         event.preventDefault();
 
-        $.post("/umbraco/backoffice/api/Pairs/SendToTranslationWholeLanguage?langId=" + langId).success(function () {
-        });
+        $.post("/umbraco/backoffice/api/Pairs/SendToTranslationWholeLanguage?langId=" + langId).success(function() {});
         getTranslationTasks();
         sendMessage("Keys for the language has been send to translation");
     }
 
     function sendMessage(message) {
         $scope.sendMessage = message;
-        $timeout(function () { $scope.sendMessage = ""; }, 3000);
+        $timeout(function() { $scope.sendMessage = ""; }, 3000);
     }
 
     $scope.selection = [];

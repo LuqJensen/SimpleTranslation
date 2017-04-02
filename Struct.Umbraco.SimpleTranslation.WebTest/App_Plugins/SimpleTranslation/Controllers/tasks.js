@@ -1,13 +1,13 @@
 ﻿var app = angular.module("umbraco");
 
-app.controller("SimpleTranslation.Tasks.Controller", function ($scope, $http, $timeout)
-{
+app.controller("SimpleTranslation.Tasks.Controller", function($scope, $http, $timeout) {
     function getTranslationTasks() {
         // Use jquery.post and jquery.get over Angular's http.post and http.get as these will wait for Angular to receive focus after dialogs.
         $.get('/umbraco/backoffice/api/Tasks/GetTranslationTasks').success(function(response) {
             // Instruct Angular to execute this on next digest. Workaround for Angular not updating regularly when not having focus due to dialogs.
             $timeout(function() {
-                $scope.data = response.tasks;
+                $scope.allData = response.tasks;
+                $scope.showData = response.tasks;
                 $scope.canDiscard = response.canDiscard;
             });
         });
@@ -39,22 +39,42 @@ app.controller("SimpleTranslation.Tasks.Controller", function ($scope, $http, $t
         });
     }
 
-    $scope.getProposalsForTask = function(id, languageId)
-    {
+    $scope.getProposalsForTask = function(id, languageId) {
         event.preventDefault();
 
         $http.get("/umbraco/backoffice/api/Tasks/GetProposalsForTask?id=" + id + "&languageId=" + languageId).success(function(response) {
             console.log(response);
         });
     }
+
+    $scope.filter = function() {
+        if ($scope.filterString.length === 0) {
+            $scope.showData = $scope.allData;
+        }
+        else {
+            $scope.showData = [];
+            angular.forEach($scope.allData, function(task) {
+                if (checkContains(task)) {
+                    $scope.showData.push(task);
+                }
+            });
+        }
+    }
+
+    function checkContains(task) {
+        if (task.key.toLowerCase().search($scope.filterString.toLowerCase()) !== -1) {
+            return true;
+        }
+        return false;
+    }
 });
 
 // Umbraco 7.5 uses Angular 1.1.5. Better built-in filters were introduced later http://stackoverflow.com/a/29675847/5552144
-app.filter('utc', function ()
-{
-    return function (val) {
-        if (!val)
+app.filter('utc', function() {
+    return function(val) {
+        if (!val) {
             return null;
+        }
 
         var date = new Date(val);
         return new Date(date.getUTCFullYear(),

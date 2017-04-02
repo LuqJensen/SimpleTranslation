@@ -18,6 +18,10 @@
     </div>
     <div class="umb-panel-body umb-scrollable row-fluid">
         <div class="umb-pane">
+            <form class="form-search ng-pristine ng-valid" ng-submit="filter()">
+                <i class="icon-search"></i>
+                <input type="text" placeholder="Type to search for keys and translation text" class="umb-search-field search-query search-input" ng-model="filterString"/>
+            </form>
             <table class="table">
                 <thead>
                 <tr>
@@ -30,7 +34,7 @@
                     </th>
                 </tr>
                 </thead>
-                <tbody ng-repeat="x in keys">
+                <tbody ng-repeat="x in showKeys">
                 <tr>
                     <td>
                         <label><input type="checkbox" ng-model="master" ng-change="toggleSelectionKey(x,master)"> {{ x.key }}</label>

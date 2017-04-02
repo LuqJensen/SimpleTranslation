@@ -9,7 +9,7 @@ using Umbraco.Web.WebApi;
 
 namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Controllers.Api
 {
-    public class userSettingsController : UmbracoAuthorizedApiController
+    public class UserSettingsController : UmbracoAuthorizedApiController
     {
         [HttpGet]
         public List<User> GetTranslationUsers()
