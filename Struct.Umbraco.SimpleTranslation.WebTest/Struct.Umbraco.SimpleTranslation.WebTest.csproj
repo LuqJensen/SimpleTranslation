@@ -307,11 +307,13 @@
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\css\simpletranslation.css" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\bootbox.min.js" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\pairs.html" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\partialViews\taskproposals.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\proposals.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\tasks.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\userSettings.html" />
     <Content Include="App_Plugins\SimpleTranslation\Controllers\Pairs.js" />
     <Content Include="App_Plugins\SimpleTranslation\Controllers\Proposals.js" />
+    <Content Include="App_Plugins\SimpleTranslation\Controllers\taskProposals.js" />
     <Content Include="App_Plugins\SimpleTranslation\Controllers\Tasks.js" />
     <Content Include="App_Plugins\SimpleTranslation\Controllers\userSettings.js" />
     <Content Include="packages.config" />

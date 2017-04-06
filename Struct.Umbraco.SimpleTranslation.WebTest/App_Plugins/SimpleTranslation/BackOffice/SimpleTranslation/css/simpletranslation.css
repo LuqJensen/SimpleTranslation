@@ -10,12 +10,15 @@ i.icon-green { color: #46a546; }
 
 i.icon-pad-right { padding-right: 5px; }
 
-div.scrollable { height: 90vh; }
-
-a.link { color: blue;}
+a.link { color: blue; }
 
 .message {
-  font-size: 14px;
-  font-weight: bold;
-  text-align: right;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: right;
+}
+
+.umb-modal.fade.in {
+    width: 50% !important;
+    margin-left: -50% !important;
 }

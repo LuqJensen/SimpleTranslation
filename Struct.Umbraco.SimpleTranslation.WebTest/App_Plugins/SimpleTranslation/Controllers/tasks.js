@@ -42,8 +42,15 @@ app.controller("SimpleTranslation.Tasks.Controller", function($scope, $http, $ti
     $scope.getProposalsForTask = function(id, languageId) {
         event.preventDefault();
 
-        $http.get("/umbraco/backoffice/api/Tasks/GetProposalsForTask?id=" + id + "&languageId=" + languageId).success(function(response) {
-            console.log(response);
+        UmbClientMgr.openAngularModalWindow({
+            template: '/App_Plugins/SimpleTranslation/BackOffice/SimpleTranslation/partialViews/taskproposals.html',
+            dialogData: {
+                id: id,
+                languageId: languageId
+            },
+            callback: function(data) {
+                var snippet = JSON.parse(data.code);
+            }
         });
     }
 

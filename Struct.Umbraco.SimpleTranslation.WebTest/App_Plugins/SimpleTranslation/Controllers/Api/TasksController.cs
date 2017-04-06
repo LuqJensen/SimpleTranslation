@@ -72,11 +72,12 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
         public object GetProposalsForTask(Guid id, int languageId)
         {
             var db = DatabaseContext.Database;
-            var latestProposals = db.Fetch<TranslationProposal>(new Sql("select * from dbo.simpleTranslationProposals where id=@tag1 and languageId=@tag2", new
-            {
-                tag1 = id,
-                tag2 = languageId
-            })).ToList();
+            var latestProposals = db.Fetch<TranslationProposal>(
+                new Sql("select p.*, u.userName from dbo.simpleTranslationProposals p left outer join dbo.umbracoUser u on p.userId=u.id where p.id=@tag1 and p.languageId=@tag2", new
+                {
+                    tag1 = id,
+                    tag2 = languageId
+                }));
 
             return latestProposals;
         }
