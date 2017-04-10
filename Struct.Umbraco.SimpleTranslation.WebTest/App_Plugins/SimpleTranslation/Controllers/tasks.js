@@ -6,8 +6,7 @@ app.controller("SimpleTranslation.Tasks.Controller", function($scope, $http, $ti
         $.get('/umbraco/backoffice/api/Tasks/GetTranslationTasks').success(function(response) {
             // Instruct Angular to execute this on next digest. Workaround for Angular not updating regularly when not having focus due to dialogs.
             $timeout(function() {
-                $scope.allData = response.tasks;
-                $scope.showData = response.tasks;
+                $scope.tasks = response.tasks;
                 $scope.canDiscard = response.canDiscard;
             });
         });
@@ -47,32 +46,8 @@ app.controller("SimpleTranslation.Tasks.Controller", function($scope, $http, $ti
             dialogData: {
                 id: id,
                 languageId: languageId
-            },
-            callback: function(data) {
-                var snippet = JSON.parse(data.code);
             }
         });
-    }
-
-    $scope.filter = function() {
-        if ($scope.filterString.length === 0) {
-            $scope.showData = $scope.allData;
-        }
-        else {
-            $scope.showData = [];
-            angular.forEach($scope.allData, function(task) {
-                if (checkContains(task)) {
-                    $scope.showData.push(task);
-                }
-            });
-        }
-    }
-
-    function checkContains(task) {
-        if (task.key.toLowerCase().search($scope.filterString.toLowerCase()) !== -1) {
-            return true;
-        }
-        return false;
     }
 });
 

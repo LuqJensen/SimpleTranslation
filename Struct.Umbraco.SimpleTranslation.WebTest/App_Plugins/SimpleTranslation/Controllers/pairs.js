@@ -13,8 +13,7 @@ app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $ti
                     loop(response[object], keys);
                 }
             }
-            $scope.allKeys = keys;
-            $scope.showKeys = keys;
+            $scope.keys = keys;
         });
     }
 
@@ -45,36 +44,6 @@ app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $ti
             });
             $scope.tasks = tasks;
         });
-    }
-
-    $scope.filter = function() {
-        if ($scope.filterString.length === 0) {
-            $scope.showKeys = $scope.allKeys;
-        }
-        else {
-            $scope.showKeys = [];
-            angular.forEach($scope.allKeys, function(key) {
-                if (checkContains(key)) {
-                    $scope.showKeys.push(key);
-                }
-            });
-        }
-
-    }
-
-    function checkContains(key) {
-        if (key.key.toLowerCase().search($scope.filterString.toLowerCase()) !== -1) {
-            return true;
-        }
-
-        var contains = false;
-        angular.forEach(key.translationTexts, function(translation) {
-            if (translation.value.toLowerCase().search($scope.filterString.toLowerCase()) !== -1) {
-                contains = true;
-                return;
-            }
-        });
-        return contains;
     }
 
     $scope.isTask = function(key, langId) {

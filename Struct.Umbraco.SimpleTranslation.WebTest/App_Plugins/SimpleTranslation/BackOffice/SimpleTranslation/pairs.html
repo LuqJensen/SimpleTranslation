@@ -18,10 +18,10 @@
     </div>
     <div class="umb-panel-body umb-scrollable row-fluid">
         <div class="umb-pane">
-            <form class="form-search ng-pristine ng-valid" ng-submit="filter()">
+            <div class="form-search">
                 <i class="icon-search"></i>
-                <input type="text" placeholder="Type to search for keys and translation text" class="umb-search-field search-query search-input" ng-model="filterString"/>
-            </form>
+                <input type="text" placeholder="Type to search for keys and translation text" class="umb-search-field search-query search-input" ng-model="searchTerm"/>
+            </div>
             <table class="table">
                 <thead>
                 <tr>
@@ -29,12 +29,12 @@
                     <th ng-repeat="x in languages" width="40px">
                         <p>{{ x.languageCultureName }}</p>
                         <a href="#" ng-click="sendToTranslationWholeLanguage( {{x.id}} )" title="Send all keys for {{ x.languageCultureName}} to translation">
-                            <i class="icon-arrow-right" style="color: #46a546;"></i>
+                            <i class="icon-arrow-right icon-green"></i>
                         </a>
                     </th>
                 </tr>
                 </thead>
-                <tbody ng-repeat="x in showKeys">
+                <tbody ng-repeat="x in keys | filter: searchTerm">
                 <tr>
                     <td>
                         <label><input type="checkbox" ng-model="master" ng-change="toggleSelectionKey(x,master)"> {{ x.key }}</label>
@@ -43,11 +43,11 @@
                         {{ getTranslation(x,lang.id) }}
                         <div ng-switch="!!translation">
                             <div ng-switch-when="true">
-                                <i class="icon-check" style="color: #46a546;" title="{{ translation }}"></i>
+                                <i class="icon-check icon-green" title="{{ translation }}"></i>
                                 <input type="checkbox" ng-change="toggleSelection(x,lang.id)" ng-model="master" ng-if="!isTask(x,lang.id)">
                             </div>
                             <div ng-switch-default>
-                                <i class="icon-delete" style="color: #ff0000;"></i>
+                                <i class="icon-delete icon-red"></i>
                                 <input type="checkbox" ng-change="toggleSelection(x,lang.id)" ng-model="master" ng-if="!isTask(x,lang.id)">
                             </div>
                         </div>

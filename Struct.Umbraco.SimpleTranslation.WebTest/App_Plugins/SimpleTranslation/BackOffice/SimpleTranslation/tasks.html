@@ -12,10 +12,10 @@
     </div>
     <div class="umb-panel-body umb-scrollable row-fluid">
         <div class="umb-pane">
-            <form class="form-search ng-pristine ng-valid" ng-submit="filter()">
+            <div class="form-search">
                 <i class="icon-search"></i>
-                <input type="text" placeholder="Type to search for keys" class="umb-search-field search-query search-input" ng-model="filterString"/>
-            </form>
+                <input type="text" placeholder="Type to search for keys" class="umb-search-field search-query search-input" ng-model="searchTerm"/>
+            </div>
             <table class="table">
                 <thead>
                 <tr>
@@ -28,7 +28,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="x in showData">
+                <tr ng-repeat="x in tasks | filter: searchTerm">
                     <td>{{ x.key }}</td>
                     <td>{{ x.language }}</td>
                     <td>
