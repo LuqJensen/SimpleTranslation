@@ -2,7 +2,7 @@
 
 app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $timeout) {
     getTranslatableKeys();
-    getLanguages();
+    getRole();
     getTranslationTasks();
 
     function getTranslatableKeys() {
@@ -26,10 +26,24 @@ app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $ti
         }
     }
 
-    function getLanguages() {
-        $http.get('/umbraco/backoffice/api/Pairs/GetLanguages').success(function(response) {
-            $scope.languages = response;
+    function getRole() {
+        $http.get('/umbraco/backoffice/api/Pairs/GetRole').success(function(response) {
+            $scope.role = response;
+            getLanguages();
         });
+    }
+
+    function getLanguages() {
+        if ($scope.role == 1) {
+            $http.get('/umbraco/backoffice/api/Pairs/GetAllLanguages').success(function(response) {
+                $scope.languages = response;
+            });
+        }
+        else {
+            $http.get('/umbraco/backoffice/api/Pairs/GetTranslatorLanguages').success(function(response) {
+                $scope.languages = response;
+            });
+        }
     }
 
     function getTranslationTasks() {
@@ -144,4 +158,24 @@ app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $ti
             });
         }
     }
+
+    $scope.getNewProposalForm = function(key, language) {
+        event.preventDefault();
+
+        UmbClientMgr.openAngularModalWindow({
+            template: '/App_Plugins/SimpleTranslation/BackOffice/SimpleTranslation/partialViews/pairsNewProposal.html',
+            dialogData: {
+                key: key,
+                language: language
+            }
+        });
+    }
+
+    $scope.createProposal = function() {
+        event.preventDefault();
+
+        $.post("/umbraco/backoffice/api/Pairs/CreateProposal?langId=" + $scope.dialogData.language.id + "&uniqueId=" + $scope.dialogData.key.id + "&value=" + $scope.proposedText).success(function() {
+            UmbClientMgr.closeModalWindow();
+        });
+    };
 });

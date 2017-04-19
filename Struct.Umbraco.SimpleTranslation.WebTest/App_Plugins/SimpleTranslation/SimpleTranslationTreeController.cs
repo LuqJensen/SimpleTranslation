@@ -10,6 +10,7 @@ using Umbraco.Core.Security;
 using Umbraco.Web.Models.Trees;
 using Umbraco.Web.Mvc;
 using Umbraco.Web.Trees;
+using Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Controllers.Api;
 
 namespace Struct.Umbraco.SimpleTranslation.App_Plugins.SimpleTranslation
 {
@@ -23,6 +24,8 @@ namespace Struct.Umbraco.SimpleTranslation.App_Plugins.SimpleTranslation
         private const string TREE_ROOT_TITLE = "SimpleTranslation";
         private const string UNREMARKABLE_BUT_NECESSARY_ID = "0";
 
+        private UserSettingsController usc = new UserSettingsController();
+
         private string CreateRoute(string subnodeAlias)
         {
             return $"{SECTION_ALIAS}/{TREE_ALIAS}/{subnodeAlias}/{UNREMARKABLE_BUT_NECESSARY_ID}";
@@ -32,14 +35,14 @@ namespace Struct.Umbraco.SimpleTranslation.App_Plugins.SimpleTranslation
         {
             TreeNodeCollection nodes = new TreeNodeCollection();
 
-            if (id == "-1")
+            if (id == "-1" && usc.GetCurrentUserRole() > 0)
             {
                 nodes.Add(CreateTreeNode("1", id, queryStrings, "Translation Tasks", "icon-folder", CreateRoute("tasks")));
+                nodes.Add(CreateTreeNode("3", id, queryStrings, "Translatable strings", "icon-folder", CreateRoute("pairs")));
 
-                if (SecurityUtility.IsEditor(UmbracoContext.Security.CurrentUser))
+                if (usc.GetCurrentUserRole() == 1 && SecurityUtility.IsEditor(UmbracoContext.Security.CurrentUser))
                 {
                     nodes.Add(CreateTreeNode("2", id, queryStrings, "Translation Proposals", "icon-folder", CreateRoute("proposals")));
-                    nodes.Add(CreateTreeNode("3", id, queryStrings, "Translatable strings", "icon-folder", CreateRoute("pairs")));
                 }
             }
 

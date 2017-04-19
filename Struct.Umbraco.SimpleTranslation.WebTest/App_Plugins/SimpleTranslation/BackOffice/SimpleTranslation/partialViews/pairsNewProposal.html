@@ -1,0 +1,38 @@
+﻿<div ng-controller="SimpleTranslation.Pairs.Controller">
+<div class="umb-panel-header umb-editor-header">
+    <div class="umb-panel-header-content-wrapper">
+        <div class="umb-panel-header-content">
+            <div class="umb-panel-header-left-side">
+                <div class="umb-panel-header-title-wrapper">
+                    <div class="umb-panel-header-name">New Proposal</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="umb-panel-body umb-scrollable row-fluid">
+    <div class="umb-pane">
+        <p>
+            <b>Key:</b> {{dialogData.key.key}}
+        </p>
+        <p>
+            <b>Language:</b> {{dialogData.language.languageCultureName}}
+        </p>
+        <p>
+            <b>Current Translation:</b> {{dialogData.key.translationTexts[dialogData.language.id].value}}
+        </p>
+        <br/>
+
+        <div>
+            <p>
+                <b>Your Proposal:</b>
+            </p>
+            <div>
+                <input ng-model="proposedText" type="text"/>
+            </div>
+            <div>
+                <a class="btn btn-primary btn" ng-click="createProposal()">CreateProposal</a>
+            </div>
+        </div>
+    </div>
+</div>

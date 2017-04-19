@@ -35,13 +35,34 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
         }
 
         [HttpGet]
-        public object GetLanguages()
+        public object GetAllLanguages()
         {
             var db = DatabaseContext.Database;
             var results = db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage"));
             return results;
         }
 
+        public object GetTranslatorLanguages()
+        {
+            var db = DatabaseContext.Database;
+            var results = db.Fetch<Language>(new Sql().Select("l.Id AS id, l.languageCultureName AS languageCultureName").From("dbo.umbracoLanguage l LEFT OUTER JOIN dbo.simpleTranslationUserLanguages u ON l.id=u.languageId").Where("u.id=@tag", new
+            {
+                tag = UmbracoContext.Security.CurrentUser.Id
+            }));
+            return results;
+        }
+
+        [HttpGet]
+        public object GetRole()
+        {
+            var db = DatabaseContext.Database;
+            var user = db.FirstOrDefault<UserRole>(new Sql().Select("*").From("dbo.simpleTranslationUserRoles").Where("id=@tag", new
+            {
+                tag = UmbracoContext.Security.CurrentUser.Id
+            }));
+
+            return user?.Role ?? 0;
+        }
 
         [HttpGet]
         public object GetTranslationTasks()
@@ -98,6 +119,20 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
                     db.Insert(data);
                 }
             }
+        }
+
+        [HttpPost]
+        public void CreateProposal(int langId, Guid uniqueId, string value)
+        {
+            var db = DatabaseContext.Database;
+            db.Insert("dbo.simpleTranslationProposals", "pk", new TranslationProposal
+            {
+                LanguageId = langId,
+                UniqueId = uniqueId,
+                UserId = UmbracoContext.Security.GetUserId(),
+                Value = value,
+                Timestamp = DateTime.UtcNow
+            });
         }
 
         private Dictionary<Guid, PairTranslations> BuildDictionary(IEnumerable<PairTranslations> rootNodes, ILookup<Guid, PairTranslations> subNodes)

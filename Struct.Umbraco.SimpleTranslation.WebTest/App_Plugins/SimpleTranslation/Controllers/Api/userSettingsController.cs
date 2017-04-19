@@ -12,12 +12,12 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
     public class UserSettingsController : UmbracoAuthorizedApiController
     {
         [HttpGet]
-        public List<User> GetTranslationUsers()
+        public List<User> GetUsers()
         {
             var db = DatabaseContext.Database;
-            var translators = db.Fetch<User>(new Sql().Select("u.id AS id, u.userName AS userName, u.userType AS userType, t.userTypeName as userTypeName").From("dbo.umbracoUser u INNER JOIN dbo.umbracoUserType t ON u.userType=t.id").Where("userTypeName LIKE '%Translator%'"));
+            var users = db.Fetch<User>(new Sql().Select("*").From("dbo.umbracoUser"));
 
-            return translators;
+            return users;
         }
 
         [HttpGet]
@@ -59,6 +59,17 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
             var user = db.FirstOrDefault<UserRole>(new Sql().Select("*").From("dbo.simpleTranslationUserRoles").Where("id=@tag", new
             {
                 tag = id
+            }));
+
+            return user?.Role ?? 0;
+        }
+
+        public int GetCurrentUserRole()
+        {
+            var db = DatabaseContext.Database;
+            var user = db.FirstOrDefault<UserRole>(new Sql().Select("*").From("dbo.simpleTranslationUserRoles").Where("id=@tag", new
+            {
+                tag = UmbracoContext.Security.CurrentUser.Id
             }));
 
             return user?.Role ?? 0;

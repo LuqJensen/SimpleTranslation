@@ -32,11 +32,15 @@ namespace Struct.Umbraco.SimpleTranslation.App_Plugins.SimpleTranslation
 
         protected override TreeNodeCollection GetTreeNodes(string id, FormDataCollection queryStrings)
         {
+            if (usc.GetCurrentUserRole() != 1 && !SecurityUtility.IsEditor(UmbracoContext.Security.CurrentUser))
+            {
+                return null;
+            }
             TreeNodeCollection nodes = new TreeNodeCollection();
 
             if (id == "-1")
             {
-                foreach (var user in usc.GetTranslationUsers())
+                foreach (var user in usc.GetUsers())
                 {
                     nodes.Add(CreateTreeNode("nodeId", id, queryStrings, user.UserName, "icon-user", CreateRoute("userSettings", user.Id)));
                 }

@@ -10,7 +10,7 @@
                 <div class="btn-toolbar umb-btn-toolbar">
                     <div class="message">
                         <span>{{ sendMessage }}</span>
-                        <a class="btn btn-primary btn" ng-click="sendToTranslation()">Send To Translation</a>
+                        <a class="btn btn-primary btn" ng-click="sendToTranslation()" ng-if="role == 1">Send To Translation</a>
                     </div>
                 </div>
             </div>
@@ -43,12 +43,12 @@
                         {{ getTranslation(x,lang.id) }}
                         <div ng-switch="!!translation">
                             <div ng-switch-when="true">
-                                <i class="icon-check icon-green" title="{{ translation }}"></i>
-                                <input type="checkbox" ng-change="toggleSelection(x,lang.id)" ng-model="master" ng-if="!isTask(x,lang.id)">
+                                <i style="cursor: pointer;" class="icon-check icon-green" title="{{ translation }}" ng-click="getNewProposalForm(x, lang)"></i>
+                                <input type="checkbox" ng-change="toggleSelection(x,lang.id)" ng-model="master" ng-if="!isTask(x,lang.id) && role == 1">
                             </div>
                             <div ng-switch-default>
-                                <i class="icon-delete icon-red"></i>
-                                <input type="checkbox" ng-change="toggleSelection(x,lang.id)" ng-model="master" ng-if="!isTask(x,lang.id)">
+                                <i style="cursor: pointer;" class="icon-delete icon-red" ng-click="getNewProposalForm(x, lang)"></i>
+                                <input type="checkbox" ng-change="toggleSelection(x,lang.id)" ng-model="master" ng-if="!isTask(x,lang.id) && role == 1">
                             </div>
                         </div>
                     </td>
