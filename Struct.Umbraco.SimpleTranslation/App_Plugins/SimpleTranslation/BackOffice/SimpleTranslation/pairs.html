@@ -1,5 +1,5 @@
 ﻿<div ng-controller="SimpleTranslation.Pairs.Controller">
-    <div class="umb-panel-header">
+    <div class="umb-panel-header umb-editor-header">
         <div class="umb-panel-header-content-wrapper">
             <div class="umb-panel-header-content">
                 <div class="umb-panel-header-left-side">
@@ -7,8 +7,54 @@
                         <div class="umb-panel-header-name">Pairs</div>
                     </div>
                 </div>
+                <div class="btn-toolbar umb-btn-toolbar">
+                    <div class="message">
+                        <span>{{ sendMessage }}</span>
+                        <a class="btn btn-primary btn" ng-click="sendToTranslation()" ng-if="role == 1">Send To Translation</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    <div class="umb-panel-body umb-scrollable row-fluid">
+        <div class="umb-pane">
+            <div class="form-search">
+                <i class="icon-search"></i>
+                <input type="text" placeholder="Type to search for keys and translation text" class="umb-search-field search-query search-input" ng-model="searchTerm"/>
+            </div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th width="300px">Key</th>
+                    <th ng-repeat="x in languages" width="40px">
+                        <p>{{ x.languageCultureName }}</p>
+                        <a href="#" ng-click="sendToTranslationWholeLanguage( {{x.id}} )" title="Send all keys for {{ x.languageCultureName}} to translation">
+                            <i class="icon-arrow-right icon-green"></i>
+                        </a>
+                    </th>
+                </tr>
+                </thead>
+                <tbody ng-repeat="x in keys | filter: searchTerm">
+                <tr>
+                    <td>
+                        <label><input type="checkbox" ng-model="master" ng-change="toggleSelectionKey(x,master)"> {{ x.key }}</label>
+                    </td>
+                    <td ng-repeat="lang in languages">
+                        {{ getTranslation(x,lang.id) }}
+                        <div ng-switch="!!translation">
+                            <div ng-switch-when="true">
+                                <i style="cursor: pointer;" class="icon-check icon-green" title="{{ translation }}" ng-click="getNewProposalForm(x, lang)"></i>
+                                <input type="checkbox" ng-change="toggleSelection(x,lang.id)" ng-model="master" ng-if="!isTask(x,lang.id) && role == 1">
+                            </div>
+                            <div ng-switch-default>
+                                <i style="cursor: pointer;" class="icon-delete icon-red" ng-click="getNewProposalForm(x, lang)"></i>
+                                <input type="checkbox" ng-change="toggleSelection(x,lang.id)" ng-model="master" ng-if="!isTask(x,lang.id) && role == 1">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-

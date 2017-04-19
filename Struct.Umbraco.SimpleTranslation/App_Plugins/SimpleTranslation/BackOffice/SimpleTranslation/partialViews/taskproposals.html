@@ -1,0 +1,20 @@
+﻿<div ng-controller="SimpleTranslation.TaskProposals.Controller">
+    <div class="umb-panel-body umb-scrollable row-fluid">
+        <div class="umb-pane">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Proposed value</th>
+                    <th>User</th>
+                    <th>Timestamp</th>
+                </tr>
+                </thead>
+                <tr ng-repeat="x in data">
+                    <td>{{ x.value }}</td>
+                    <td>{{ x.userName }}</td>
+                    <td>{{ x.timestamp | utc | date : 'dd/MM/yy @ HH:mm' }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

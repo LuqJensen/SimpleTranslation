@@ -1,0 +1,50 @@
+﻿<div ng-controller="SimpleTranslation.UserSettings.Controller">
+    <div class="umb-panel-header umb-editor-header">
+        <div class="umb-panel-header-content-wrapper">
+            <div class="umb-panel-header-content">
+                <div class="umb-panel-header-left-side">
+                    <div class="umb-panel-header-title-wrapper">
+                        <div class="umb-panel-header-name">Translation Languages for {{ user.userName }}</div>
+                    </div>
+                </div>
+                <div class="btn-toolbar umb-btn-toolbar">
+                    <div class="message">
+                        <span>{{ saveMessage }}</span>
+                        <a class="btn btn-primary btn" ng-click="save()">Save</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="umb-panel-body umb-scrollable row-fluid">
+        <div class="umb-pane">
+            <div class="control-group umb-control-group">
+                <div class="umb-el-wrap">
+                    <label class="control-label">Role</label>
+                    <div class="controls controls-row">
+                        <select ng-model="newRole">
+                            <option value="0">None</option>
+                            <option value="1">Editor</option>
+                            <option value="2">Translator</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="umb-pane" ng-if="newRole == 2">
+            <div class="control-group umb-control-group">
+                <div class="umb-el-wrap">
+                    <label class="control-label">Translation Languages</label>
+                    <div class="controls controls-row">
+                        <span>
+                            <div ng-repeat="x in languages">
+                                <label ng-if="user.languages.indexOf(x.id) == -1"><input type="checkbox" checked="checked" ng-change="toggleSelectionAdd(x.id)" ng-checked=false ng-model="master">{{ x.languageCultureName }}</label>
+                                <label ng-if="user.languages.indexOf(x.id) != -1"><input type="checkbox" checked="checked" ng-change="toggleSelectionRemove(x.id)" ng-checked=true ng-model="master">{{ x.languageCultureName }}</label>
+                            </div>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

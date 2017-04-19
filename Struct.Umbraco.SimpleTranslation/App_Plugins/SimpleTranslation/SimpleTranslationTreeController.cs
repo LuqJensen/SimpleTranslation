@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Formatting;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
-using Umbraco.Core.Security;
+﻿using System.Net.Http.Formatting;
 using Umbraco.Web.Models.Trees;
 using Umbraco.Web.Mvc;
 using Umbraco.Web.Trees;
 
-namespace Struct.Umbraco.SimpleTranslation.App_Plugins.SimpleTranslation
+namespace Struct.Umbraco.SimpleTranslation
 {
     [Tree(SECTION_ALIAS, TREE_ALIAS, TREE_ROOT_TITLE)]
     [PluginController(PLUGIN_NAME)]
@@ -31,19 +24,17 @@ namespace Struct.Umbraco.SimpleTranslation.App_Plugins.SimpleTranslation
         {
             TreeNodeCollection nodes = new TreeNodeCollection();
 
-            if (id == "-1")
-            {
-                nodes.Add(CreateTreeNode("1", id, queryStrings, "Translation Tasks", "icon-folder", CreateRoute("tasks")));
-                nodes.Add(CreateTreeNode("2", id, queryStrings, "Translation Proposals", "icon-folder", CreateRoute("proposals")));
+            var userRoleHelper = new UserRoleHelper(DatabaseContext.Database);
+            var userId = UmbracoContext.Security.GetUserId();
 
-                var user = UmbracoContext.Security.CurrentUser;
-                if (user != null)
+            if (id == "-1" && userRoleHelper.CanUseSimpleTranslation(userId))
+            {
+                nodes.Add(CreateTreeNode("1", id, queryStrings, "Translatable strings", "icon-folder", CreateRoute("pairs")));
+                nodes.Add(CreateTreeNode("2", id, queryStrings, "Translation Tasks", "icon-folder", CreateRoute("tasks")));
+
+                if (userRoleHelper.IsEditor(userId))
                 {
-                    //var permissions = user.UserType.Permissions; // TODO: investigate whether Permissions is more suitable for authorization.
-                    if (user.UserType.Alias == "admin" || user.UserType.Alias == "editor")
-                    {
-                        nodes.Add(CreateTreeNode("3", id, queryStrings, "Translatable strings", "icon-folder", CreateRoute("pairs")));
-                    }
+                    nodes.Add(CreateTreeNode("3", id, queryStrings, "Translation Proposals", "icon-folder", CreateRoute("proposals")));
                 }
             }
 

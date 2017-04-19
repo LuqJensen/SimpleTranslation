@@ -1,5 +1,5 @@
 ﻿<div ng-controller="SimpleTranslation.Proposals.Controller">
-    <div class="umb-panel-header">
+    <div class="umb-panel-header umb-editor-header">
         <div class="umb-panel-header-content-wrapper">
             <div class="umb-panel-header-content">
                 <div class="umb-panel-header-left-side">
@@ -10,5 +10,39 @@
             </div>
         </div>
     </div>
+    <div class="umb-panel-body umb-scrollable row-fluid">
+        <div class="umb-pane">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Proposed value</th>
+                    <th>Language</th>
+                    <th>User</th>
+                    <th>Timestamp</th>
+                </tr>
+                </thead>
+                <tbody ng-repeat="x in data">
+                <tr>
+                    <td colspan="6">{{ x.key }}</td>
+                </tr>
+                <tr ng-repeat="y in x.translationProposals">
+                    <td></td>
+                    <td>{{ y.value }}</td>
+                    <td>{{ y.language }}</td>
+                    <td>{{ y.userName }}</td>
+                    <td>{{ y.timestamp | utc | date : 'dd/MM/yy @ HH:mm' }}</td>
+                    <td>
+                        <a href="#" ng-click="acceptProposal(y, x.translationProposals)">
+                            <i class="icon-check icon-green icon-pad-right"></i>
+                        </a>
+                        <a href="#" ng-click="rejectProposal(y.primaryKey)">
+                            <i class="icon-wrong icon-red"></i>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-
