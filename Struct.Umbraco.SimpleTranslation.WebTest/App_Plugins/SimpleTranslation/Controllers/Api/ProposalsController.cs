@@ -1,25 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web;
+﻿using System.Linq;
 using System.Web.Http;
-using Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Models;
-using Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Utility;
+using Struct.Umbraco.SimpleTranslation.Models;
 using Umbraco.Core.Models;
 using Umbraco.Core.Persistence;
-using Umbraco.Core.Services;
-using Umbraco.Web;
 using Umbraco.Web.WebApi;
 
-namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Controllers.Api
+namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
 {
     public class ProposalsController : UmbracoAuthorizedApiController
     {
         private bool CanEdit()
         {
-            return SecurityUtility.IsEditor(UmbracoContext.Security.CurrentUser);
+            var userRoleHelper = new UserRoleHelper(DatabaseContext.Database);
+            return userRoleHelper.IsEditor(UmbracoContext.Security.GetUserId());
         }
 
         [HttpGet]

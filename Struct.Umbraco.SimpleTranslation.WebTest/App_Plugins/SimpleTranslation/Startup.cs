@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Models;
+﻿using Struct.Umbraco.SimpleTranslation.Models;
 using Umbraco.Core;
 using Umbraco.Core.Persistence;
 
-namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
+namespace Struct.Umbraco.SimpleTranslation
 {
     public class Startup : ApplicationEventHandler
     {

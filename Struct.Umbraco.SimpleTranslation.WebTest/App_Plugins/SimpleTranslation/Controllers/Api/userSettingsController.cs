@@ -1,25 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using System.Web.Http;
-using Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Models;
+using Struct.Umbraco.SimpleTranslation.Models;
 using Umbraco.Core.Persistence;
 using Umbraco.Web.WebApi;
 
-namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Controllers.Api
+namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
 {
     public class UserSettingsController : UmbracoAuthorizedApiController
     {
-        [HttpGet]
-        public List<User> GetUsers()
-        {
-            var db = DatabaseContext.Database;
-            var users = db.Fetch<User>(new Sql().Select("*").From("dbo.umbracoUser"));
-
-            return users;
-        }
-
         [HttpGet]
         public object GetUser(int id)
         {
@@ -55,24 +43,9 @@ namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation
         [HttpGet]
         public object GetRole(int id)
         {
-            var db = DatabaseContext.Database;
-            var user = db.FirstOrDefault<UserRole>(new Sql().Select("*").From("dbo.simpleTranslationUserRoles").Where("id=@tag", new
-            {
-                tag = id
-            }));
+            var userRoleHelper = new UserRoleHelper(DatabaseContext.Database);
 
-            return user?.Role ?? 0;
-        }
-
-        public int GetCurrentUserRole()
-        {
-            var db = DatabaseContext.Database;
-            var user = db.FirstOrDefault<UserRole>(new Sql().Select("*").From("dbo.simpleTranslationUserRoles").Where("id=@tag", new
-            {
-                tag = UmbracoContext.Security.CurrentUser.Id
-            }));
-
-            return user?.Role ?? 0;
+            return userRoleHelper.GetUserRole(id);
         }
 
         [HttpPost]

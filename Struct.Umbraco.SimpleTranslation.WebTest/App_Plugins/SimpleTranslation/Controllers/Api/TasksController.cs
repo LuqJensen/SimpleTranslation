@@ -1,22 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Http;
-using Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Models;
-using Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Utility;
-using Umbraco.Core;
+using Struct.Umbraco.SimpleTranslation.Models;
 using Umbraco.Core.Persistence;
-using Umbraco.Core.Models;
 using Umbraco.Web.WebApi;
 
-namespace Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Controllers.Api
+namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
 {
     public class TasksController : UmbracoAuthorizedApiController
     {
         private bool CanDiscard()
         {
-            return SecurityUtility.IsEditor(UmbracoContext.Security.CurrentUser);
+            var userRoleHelper = new UserRoleHelper(DatabaseContext.Database);
+            return userRoleHelper.IsEditor(UmbracoContext.Security.GetUserId());
         }
 
         [HttpGet]

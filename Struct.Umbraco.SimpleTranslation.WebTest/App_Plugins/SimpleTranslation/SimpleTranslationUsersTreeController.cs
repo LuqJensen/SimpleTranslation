@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Formatting;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
-using Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Controllers.Api;
-using Struct.Umbraco.SimpleTranslation.WebTest.App_Plugins.SimpleTranslation.Utility;
-using Umbraco.Core.Security;
+﻿using System.Net.Http.Formatting;
 using Umbraco.Web.Models.Trees;
 using Umbraco.Web.Mvc;
 using Umbraco.Web.Trees;
 
-namespace Struct.Umbraco.SimpleTranslation.App_Plugins.SimpleTranslation
+namespace Struct.Umbraco.SimpleTranslation
 {
     [Tree(SECTION_ALIAS, TREE_ALIAS, TREE_ROOT_TITLE)]
     [PluginController(PLUGIN_NAME)]
@@ -23,8 +14,6 @@ namespace Struct.Umbraco.SimpleTranslation.App_Plugins.SimpleTranslation
         private const string TREE_ALIAS = "simpletranslation";
         private const string TREE_ROOT_TITLE = "SimpleTranslations";
 
-        private UserSettingsController usc = new UserSettingsController();
-
         private string CreateRoute(string subnodeAlias, int id)
         {
             return $"{SECTION_ALIAS}/{TREE_ALIAS}/{subnodeAlias}/{id}";
@@ -32,15 +21,13 @@ namespace Struct.Umbraco.SimpleTranslation.App_Plugins.SimpleTranslation
 
         protected override TreeNodeCollection GetTreeNodes(string id, FormDataCollection queryStrings)
         {
-            if (usc.GetCurrentUserRole() != 1 && !SecurityUtility.IsEditor(UmbracoContext.Security.CurrentUser))
-            {
-                return null;
-            }
             TreeNodeCollection nodes = new TreeNodeCollection();
+
+            var userRoleHelper = new UserRoleHelper(DatabaseContext.Database);
 
             if (id == "-1")
             {
-                foreach (var user in usc.GetUsers())
+                foreach (var user in userRoleHelper.GetUsers())
                 {
                     nodes.Add(CreateTreeNode("nodeId", id, queryStrings, user.UserName, "icon-user", CreateRoute("userSettings", user.Id)));
                 }

@@ -307,6 +307,7 @@
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\css\simpletranslation.css" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\bootbox.min.js" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\pairs.html" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\partialViews\pairsNewProposal.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\partialViews\taskproposals.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\proposals.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\tasks.html" />
@@ -405,7 +406,7 @@
     <Compile Include="App_Plugins\SimpleTranslation\SimpleTranslationUsersTreeController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\SimpleTranslationTreeController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Startup.cs" />
-    <Compile Include="App_Plugins\SimpleTranslation\Utility\SecurityUtility.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\Utility\UserRoleHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
