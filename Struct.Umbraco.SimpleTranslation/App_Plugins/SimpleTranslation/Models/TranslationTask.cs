@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Umbraco.Core.Persistence;
 using Umbraco.Core.Persistence.DatabaseAnnotations;
@@ -37,7 +38,7 @@ namespace Struct.Umbraco.SimpleTranslation.Models
         public TranslationProposal LatestPersonalProposal { get; set; }
 
         [Ignore]
-        [JsonProperty("latestProposal")]
-        public TranslationProposal LatestProposal { get; set; }
+        [JsonProperty("currentTranslations")]
+        public Dictionary<int, string> CurrentTranslations { get; set; }
     }
 }

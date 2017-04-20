@@ -8,6 +8,8 @@ app.controller("SimpleTranslation.Tasks.Controller", function($scope, $http, $ti
             $timeout(function() {
                 $scope.tasks = response.tasks;
                 $scope.canDiscard = response.canDiscard;
+                $scope.languages = response.languages;
+                $scope.selectedLanguage = $scope.languages[0].id;
             });
         });
     }
