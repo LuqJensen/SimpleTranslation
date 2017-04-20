@@ -34,6 +34,13 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
 
             var tasks = db.Fetch<TranslationTask>(tasksQuery);
 
+            var currentTranslations =
+                db.Fetch<TranslationText>(new Sql("select * from dbo.cmsLanguageText where UniqueId in (@ids)", new
+                {
+                    ids = tasks.Select(x => x.UniqueId).Distinct()
+                })).ToLookup(x => x.UniqueId, x => x);
+
+
             var latestPersonalProposals = db.Fetch<TranslationProposal>(
                 new Sql("select p1.* from dbo.simpleTranslationProposals p1 INNER JOIN" +
                         "(select MAX(pk) AS pk, id, languageId from dbo.simpleTranslationProposals where userId=@userId GROUP BY id, languageId)" +
@@ -55,12 +62,15 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
                     v.LanguageId
                 }, out p);
                 v.LatestPersonalProposal = p;
+
+                v.CurrentTranslations = currentTranslations[v.UniqueId].ToDictionary(x => x.LangId, x => x.Value);
             }
 
             return new
             {
                 tasks,
-                canDiscard = CanDiscard()
+                canDiscard = CanDiscard(),
+                languages = db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage"))
             };
         }
 

@@ -20,6 +20,9 @@
                 <thead>
                 <tr>
                     <th>Key</th>
+                    <th>
+                        <select ng-model="selectedLanguage" ng-options="option.id as option.languageCultureName for option in languages"></select>
+                    </th>
                     <th>Language</th>
                     <th></th>
                     <th>Latest proposal</th>
@@ -30,6 +33,7 @@
                 <tbody>
                 <tr ng-repeat="x in tasks | filter: searchTerm">
                     <td>{{ x.key }}</td>
+                    <td>{{ x.currentTranslations[selectedLanguage] }}</td>
                     <td>{{ x.language }}</td>
                     <td>
                         <form ng-submit="createProposal(x)">
