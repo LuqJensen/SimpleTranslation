@@ -10,13 +10,28 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
 {
     public class PairsController : UmbracoAuthorizedApiController
     {
+        private Database _db;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _db?.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        public PairsController()
+        {
+            _db = DatabaseContext.Database;
+        }
+
         [HttpGet]
         public object GetTranslatableKeys()
         {
-            var db = DatabaseContext.Database;
-            var results = db.Fetch<PairTranslations>(new Sql().Select("*").From("dbo.cmsDictionary"));
+            var results = _db.Fetch<PairTranslations>(new Sql().Select("*").From("dbo.cmsDictionary"));
 
-            var resultsLangText = db.Fetch<TranslationText>(new Sql().Select("*").From("dbo.cmsLanguageText")).ToLookup(x => x.UniqueId, x => x);
+            var resultsLangText = _db.Fetch<TranslationText>(new Sql().Select("*").From("dbo.cmsLanguageText")).ToLookup(x => x.UniqueId, x => x);
             foreach (var v in results)
             {
                 v.TranslationTexts = new Dictionary<int, TranslationText>();
@@ -33,15 +48,13 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
         [HttpGet]
         public object GetAllLanguages()
         {
-            var db = DatabaseContext.Database;
-            var results = db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage"));
+            var results = _db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage"));
             return results;
         }
 
         public object GetTranslatorLanguages()
         {
-            var db = DatabaseContext.Database;
-            var results = db.Fetch<Language>(new Sql().Select("l.Id AS id, l.languageCultureName AS languageCultureName").From("dbo.umbracoLanguage l LEFT OUTER JOIN dbo.simpleTranslationUserLanguages u ON l.id=u.languageId").Where("u.id=@tag", new
+            var results = _db.Fetch<Language>(new Sql().Select("l.Id AS id, l.languageCultureName AS languageCultureName").From("dbo.umbracoLanguage l LEFT OUTER JOIN dbo.simpleTranslationUserLanguages u ON l.id=u.languageId").Where("u.id=@tag", new
             {
                 tag = UmbracoContext.Security.CurrentUser.Id
             }));
@@ -51,8 +64,7 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
         [HttpGet]
         public object GetRole()
         {
-            var db = DatabaseContext.Database;
-            var user = db.FirstOrDefault<UserRole>(new Sql().Select("*").From("dbo.simpleTranslationUserRoles").Where("id=@tag", new
+            var user = _db.FirstOrDefault<UserRole>(new Sql().Select("*").From("dbo.simpleTranslationUserRoles").Where("id=@tag", new
             {
                 tag = UmbracoContext.Security.CurrentUser.Id
             }));
@@ -63,43 +75,37 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
         [HttpGet]
         public object GetTranslationTasks()
         {
-            var db = DatabaseContext.Database;
-            var tasks = db.Fetch<TranslationTask>(new Sql().Select("*").From("dbo.simpleTranslationTasks"));
+            var tasks = _db.Fetch<TranslationTask>(new Sql().Select("*").From("dbo.simpleTranslationTasks"));
 
             return tasks;
         }
 
         [HttpPost]
-        public void SendToTranslation(Guid id, int langId)
+        public void SendToTranslation(IEnumerable<TranslationTask> tasks)
         {
-            var db = DatabaseContext.Database;
-
-            var existingData = db.FirstOrDefault<TranslationTask>(new Sql("SELECT * FROM dbo.simpleTranslationTasks WHERE id=@tag1 AND languageId=@tag2", new
+            foreach (var t in tasks)
             {
-                tag1 = id,
-                tag2 = langId
-            }));
-
-            if (existingData == null)
-            {
-                var data = new TranslationTask
+                var existingData = _db.FirstOrDefault<TranslationTask>(new Sql("SELECT * FROM dbo.simpleTranslationTasks WHERE id=@tag1 AND languageId=@tag2", new
                 {
-                    UniqueId = id,
-                    LanguageId = langId
-                };
-                db.Insert(data);
+                    tag1 = t.UniqueId,
+                    tag2 = t.LanguageId
+                }));
+
+                if (existingData == null)
+                {
+                    _db.Insert(t);
+                }
             }
         }
 
         [HttpPost]
         public void SendToTranslationWholeLanguage(int langId)
         {
-            var db = DatabaseContext.Database;
-            var keys = db.Fetch<Pair>(new Sql().Select("id").From("dbo.cmsDictionary"));
+            var keys = _db.Fetch<Pair>(new Sql().Select("id").From("dbo.cmsDictionary"));
 
             foreach (var key in keys)
             {
-                var existingData = db.FirstOrDefault<TranslationTask>(new Sql("SELECT * FROM dbo.simpleTranslationTasks WHERE id=@tag1 AND languageId=@tag2", new
+                var existingData = _db.FirstOrDefault<TranslationTask>(new Sql("SELECT * FROM dbo.simpleTranslationTasks WHERE id=@tag1 AND languageId=@tag2", new
                 {
                     tag1 = key.UniqueId,
                     tag2 = langId
@@ -112,7 +118,7 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
                         UniqueId = key.UniqueId,
                         LanguageId = langId
                     };
-                    db.Insert(data);
+                    _db.Insert(data);
                 }
             }
         }
@@ -120,8 +126,7 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
         [HttpPost]
         public void CreateProposal(int langId, Guid uniqueId, string value)
         {
-            var db = DatabaseContext.Database;
-            db.Insert("dbo.simpleTranslationProposals", "pk", new TranslationProposal
+            _db.Insert("dbo.simpleTranslationProposals", "pk", new TranslationProposal
             {
                 LanguageId = langId,
                 UniqueId = uniqueId,

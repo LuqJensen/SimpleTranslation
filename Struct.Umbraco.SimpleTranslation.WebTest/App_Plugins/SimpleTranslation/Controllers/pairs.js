@@ -52,8 +52,8 @@ app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $ti
 
             angular.forEach(response, function(task) {
                 tasks.push({
-                    keyId: task.id,
-                    langId: task.languageId
+                    id: task.id,
+                    languageId: task.languageId
                 });
             });
             $scope.tasks = tasks;
@@ -62,7 +62,7 @@ app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $ti
 
     $scope.isTask = function(key, langId) {
         return $scope.tasks.some(function(e) {
-            return e.keyId === key.id && e.langId === langId;
+            return e.id === key.id && e.languageId === langId;
         });
     };
 
@@ -77,14 +77,17 @@ app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $ti
 
     $scope.sendToTranslation = function() {
         event.preventDefault();
-        angular.forEach($scope.selection, function(task) {
-            $.post("/umbraco/backoffice/api/Pairs/SendToTranslation?id=" + task.keyId + "&langId=" + task.langId).success(function() {});
-            $scope.tasks.push({
-                keyId: task.keyId,
-                langId: task.langId
+        console.log($scope.selection);
+        $http.post("/umbraco/backoffice/api/Pairs/SendToTranslation", $scope.selection).success(function() {
+            angular.forEach($scope.selection, function(task) {
+                $scope.tasks.push({
+                    id: task.id,
+                    languageId: task.languageId
+                });
             });
+            $scope.selection = [];
         });
-        sendMessage("Selected keys has been send to translation");
+        sendMessage("Selected keys have been send to translation");
     }
 
     $scope.sendToTranslationWholeLanguage = function(langId) {
@@ -92,7 +95,7 @@ app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $ti
 
         $.post("/umbraco/backoffice/api/Pairs/SendToTranslationWholeLanguage?langId=" + langId).success(function() {});
         getTranslationTasks();
-        sendMessage("Keys for the language has been send to translation");
+        sendMessage("Keys for the language have been send to translation");
     }
 
     function sendMessage(message) {
@@ -102,13 +105,13 @@ app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $ti
 
     $scope.selection = [];
 
-    $scope.toggleSelection = function(key, langId) {
+    $scope.toggleSelection = function(key, languageId) {
         var pos = (function() {
             var pos;
 
             var found = $scope.selection.some(function(e, i) {
                 pos = i;
-                return e.keyId === key.id && e.langId === langId;
+                return e.keyId === key.id && e.languageId === languageId;
             });
 
             return found ? pos : -1;
@@ -119,8 +122,8 @@ app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $ti
         }
         else {
             $scope.selection.push({
-                keyId: key.id,
-                langId: langId
+                id: key.id,
+                languageId: languageId
             });
         }
     };
@@ -129,13 +132,13 @@ app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $ti
         if (checked) {
             angular.forEach($scope.languages, function(lang) {
                 if (!$scope.selection.some(function(e) {
-                    return e.keyId === key.id && e.langId === lang.id;
+                    return e.id === key.id && e.languageId === lang.id;
                 }) && !$scope.tasks.some(function(e) {
-                    return e.keyId === key.id && e.langId === lang.id;
+                    return e.id === key.id && e.languageId === lang.id;
                 })) {
                     $scope.selection.push({
-                        keyId: key.id,
-                        langId: lang.id
+                        id: key.id,
+                        languageId: lang.id
                     });
                 }
             });
@@ -147,7 +150,7 @@ app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $ti
 
                     var found = $scope.selection.some(function(e, i) {
                         pos = i;
-                        return e.keyId === key.id && e.langId === lang.id;
+                        return e.id === key.id && e.languageId === lang.id;
                     });
 
                     return found ? pos : -1;
