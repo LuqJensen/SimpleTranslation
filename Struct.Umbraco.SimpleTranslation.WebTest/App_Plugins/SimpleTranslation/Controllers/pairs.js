@@ -111,7 +111,7 @@ app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $ti
 
             var found = $scope.selection.some(function(e, i) {
                 pos = i;
-                return e.keyId === key.id && e.languageId === languageId;
+                return e.id === key.id && e.languageId === languageId;
             });
 
             return found ? pos : -1;
