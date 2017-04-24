@@ -9,22 +9,32 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
 {
     public class TasksController : UmbracoAuthorizedApiController
     {
-        private bool CanDiscard()
+        private Database _db;
+        private UserRoleHelper _urh;
+
+        protected override void Dispose(bool disposing)
         {
-            var userRoleHelper = new UserRoleHelper(DatabaseContext.Database);
-            return userRoleHelper.IsEditor(UmbracoContext.Security.GetUserId());
+            if (disposing)
+            {
+                _db?.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        public TasksController()
+        {
+            _db = DatabaseContext.Database;
+            _urh = new UserRoleHelper(_db);
         }
 
         [HttpGet]
         public object GetTranslationTasks()
         {
-            var db = DatabaseContext.Database;
-
             var tasksQuery = new Sql()
                 .Select("t.*, l.languageCultureName AS language, d.[key] AS [key]")
                 .From("dbo.simpleTranslationTasks t LEFT OUTER JOIN dbo.umbracoLanguage l ON t.languageId=l.id LEFT OUTER JOIN dbo.cmsDictionary d ON t.id=d.id");
 
-            if (!CanDiscard()) // Only translators are limited to languages they are responsible for. Administrators and Editors can view tasks for all languages.
+            if (!_urh.IsEditor(UmbracoContext.Security.GetUserId())) // Only translators are limited to languages they are responsible for. Administrators and Editors can view tasks for all languages.
             {
                 tasksQuery = tasksQuery.Where("t.languageId IN (select languageId from dbo.simpleTranslationUserLanguages where id=@tag)", new
                 {
@@ -32,16 +42,16 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
                 });
             }
 
-            var tasks = db.Fetch<TranslationTask>(tasksQuery);
+            var tasks = _db.Fetch<TranslationTask>(tasksQuery);
 
             var currentTranslations =
-                db.Fetch<TranslationText>(new Sql("select * from dbo.cmsLanguageText where UniqueId in (@ids)", new
+                _db.Fetch<TranslationText>(new Sql("select * from dbo.cmsLanguageText where UniqueId in (@ids)", new
                 {
                     ids = tasks.Select(x => x.UniqueId).Distinct()
                 })).ToLookup(x => x.UniqueId, x => x);
 
 
-            var latestPersonalProposals = db.Fetch<TranslationProposal>(
+            var latestPersonalProposals = _db.Fetch<TranslationProposal>(
                 new Sql("select p1.* from dbo.simpleTranslationProposals p1 INNER JOIN" +
                         "(select MAX(pk) AS pk, id, languageId from dbo.simpleTranslationProposals where userId=@userId GROUP BY id, languageId)" +
                         "AS p2 ON p1.pk=p2.pk", new
@@ -69,16 +79,15 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
             return new
             {
                 tasks,
-                canDiscard = CanDiscard(),
-                languages = db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage"))
+                canDiscard = _urh.IsEditor(UmbracoContext.Security.GetUserId()),
+                languages = _db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage"))
             };
         }
 
         [HttpGet]
         public object GetProposalsForTask(Guid id, int languageId)
         {
-            var db = DatabaseContext.Database;
-            var latestProposals = db.Fetch<TranslationProposal>(
+            var latestProposals = _db.Fetch<TranslationProposal>(
                 new Sql("select p.*, u.userName from dbo.simpleTranslationProposals p left outer join dbo.umbracoUser u on p.userId=u.id where p.id=@tag1 and p.languageId=@tag2", new
                 {
                     tag1 = id,
@@ -91,11 +100,10 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
         [HttpPost]
         public void DeleteTask(int id)
         {
-            if (!CanDiscard())
+            if (!_urh.IsEditor(UmbracoContext.Security.GetUserId()))
                 return;
 
-            var db = DatabaseContext.Database;
-            db.Delete<TranslationTask>(new Sql().Where("pk=@tag", new
+            _db.Delete<TranslationTask>(new Sql().Where("pk=@tag", new
             {
                 tag = id
             }));
@@ -104,8 +112,10 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
         [HttpPost]
         public void CreateProposal(TaskProposal proposal)
         {
-            var db = DatabaseContext.Database;
-            db.Insert("dbo.simpleTranslationProposals", "pk", new TranslationProposal
+            if (!_urh.CanUseSimpleTranslation(UmbracoContext.Security.GetUserId()))
+                return;
+
+            _db.Insert("dbo.simpleTranslationProposals", "pk", new TranslationProposal
             {
                 LanguageId = proposal.LanguageId,
                 UniqueId = proposal.UniqueId,

@@ -389,6 +389,7 @@
   <ItemGroup>
     <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\ProposalsController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\PairsController.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\Models\SettingsDTO.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\TasksController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\UserSettingsController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\PairProposals.cs" />

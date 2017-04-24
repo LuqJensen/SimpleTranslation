@@ -10,6 +10,6 @@ namespace Struct.Umbraco.SimpleTranslation.Models
         public Dictionary<Guid, PairTranslations> Children { get; set; }
 
         [JsonProperty("translationTexts")]
-        public Dictionary<int, TranslationText> TranslationTexts { get; set; }
+        public Dictionary<int, string> TranslationTexts { get; set; }
     }
 }

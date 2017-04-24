@@ -1,14 +1,18 @@
 ﻿var app = angular.module("umbraco");
 
 app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $timeout) {
+
     getTranslatableKeys();
     getRole();
     getTranslationTasks();
+    getMyLanguages();
 
     function getTranslatableKeys() {
         $http.get('/umbraco/backoffice/api/Pairs/GetTranslatableKeys').success(function(response) {
+            $scope.role = response.role;
+
             var keys = [];
-            for (var object in response) {
+            for (var object in response.pairs) {
                 if (response.hasOwnProperty(object)) {
                     loop(response[object], keys);
                 }
@@ -27,23 +31,13 @@ app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $ti
     }
 
     function getRole() {
-        $http.get('/umbraco/backoffice/api/Pairs/GetRole').success(function(response) {
-            $scope.role = response;
-            getLanguages();
-        });
+        $http.get('/umbraco/backoffice/api/Pairs/GetRole').success(function(response) {});
     }
 
-    function getLanguages() {
-        if ($scope.role == 1) {
-            $http.get('/umbraco/backoffice/api/Pairs/GetAllLanguages').success(function(response) {
-                $scope.languages = response;
-            });
-        }
-        else {
-            $http.get('/umbraco/backoffice/api/Pairs/GetTranslatorLanguages').success(function(response) {
-                $scope.languages = response;
-            });
-        }
+    function getMyLanguages() {
+        $http.get('/umbraco/backoffice/api/Pairs/GetMyLanguages').success(function(response) {
+            $scope.languages = response;
+        });
     }
 
     function getTranslationTasks() {
@@ -68,7 +62,7 @@ app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $ti
 
     $scope.getTranslation = function(object, langId) {
         if (object.translationTexts[langId]) {
-            $scope.translation = object.translationTexts[langId].value;
+            $scope.translation = object.translationTexts[langId];
         }
         else {
             $scope.translation = null;
@@ -77,7 +71,7 @@ app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $ti
 
     $scope.sendToTranslation = function() {
         event.preventDefault();
-        console.log($scope.selection);
+
         $http.post("/umbraco/backoffice/api/Pairs/SendToTranslation", $scope.selection).success(function() {
             angular.forEach($scope.selection, function(task) {
                 $scope.tasks.push({

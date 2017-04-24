@@ -2,46 +2,39 @@
 
 app.controller("SimpleTranslation.UserSettings.Controller", function($scope, $http, $routeParams, $timeout) {
     getUser();
-    getLanguages();
-    getRole();
 
     function getUser() {
         $http.get('/umbraco/backoffice/api/UserSettings/GetUser?id=' + $routeParams.id).success(function(response) {
-            $scope.user = response;
-        });
-    }
-
-    function getLanguages() {
-        $http.get('/umbraco/backoffice/api/UserSettings/GetLanguages').success(function(response) {
-            $scope.languages = response;
-        });
-    }
-
-    function getRole() {
-        $http.get('/umbraco/backoffice/api/UserSettings/GetRole?id=' + $routeParams.id).success(function(response) {
-            $scope.currentRole = response;
-            $scope.newRole = response;
+            $scope.user = response.user;
+            $scope.currentRole = response.role;
+            $scope.newRole = response.role;
+            $scope.languages = response.languages;
         });
     }
 
     $scope.save = function() {
         event.preventDefault();
 
-        angular.forEach($scope.addSelection, function(langId) {
-            $.post("/umbraco/backoffice/api/UserSettings/AddLanguage?userId=" + $scope.user.id + "&langId=" + langId).success(function() {});
-        });
-        angular.forEach($scope.removeSelection, function(langId) {
-            $.post("/umbraco/backoffice/api/UserSettings/RemoveLanguage?userId=" + $scope.user.id + "&langId=" + langId).success(function() {});
-        });
-        saveMessage("Saved");
-        getUser();
-        $scope.addSelection = [];
-        $scope.removeSelection = [];
-
-        if ($scope.currentRole !== $scope.newRole) {
-            $.post("/umbraco/backoffice/api/UserSettings/SetRole?userId=" + $scope.user.id + "&roleId=" + $scope.newRole).success(function() {});
+        var payload = {
+            userId: $scope.user.id,
+            AddLanguages: $scope.addSelection,
+            RemoveLanguages: $scope.removeSelection
         }
 
+        $http.post("/umbraco/backoffice/api/UserSettings/ChangeLanguages", payload).success(function() {
+            saveMessage("Saved");
+
+            getUser();
+        });
+
+        if ($scope.currentRole !== $scope.newRole) {
+            $.post("/umbraco/backoffice/api/UserSettings/SetRole?userId=" + $scope.user.id + "&roleId=" + $scope.newRole).success(function() {
+                saveMessage("Saved");
+            });
+        }
+
+        $scope.addSelection = [];
+        $scope.removeSelection = [];
     }
 
     function saveMessage(message) {

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.Http;
 using Struct.Umbraco.SimpleTranslation.Models;
 using Umbraco.Core.Persistence;
@@ -8,15 +10,32 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
 {
     public class UserSettingsController : UmbracoAuthorizedApiController
     {
+        private Database _db;
+        private UserRoleHelper _urh;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _db?.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        public UserSettingsController()
+        {
+            _db = DatabaseContext.Database;
+            _urh = new UserRoleHelper(_db);
+        }
+
         [HttpGet]
         public object GetUser(int id)
         {
-            var db = DatabaseContext.Database;
-            var user = db.FirstOrDefault<UserLanguages>(new Sql().Select("*").From("dbo.umbracoUser").Where("id=@tag", new
+            var user = _db.FirstOrDefault<UserLanguages>(new Sql().Select("*").From("dbo.umbracoUser").Where("id=@tag", new
             {
                 tag = id
             }));
-            var languages = db.Fetch<UserLanguage>(new Sql().Select("*").From("dbo.simpleTranslationUserLanguages").Where("id=@tag", new
+            var languages = _db.Fetch<UserLanguage>(new Sql().Select("*").From("dbo.simpleTranslationUserLanguages").Where("id=@tag", new
             {
                 tag = id
             }));
@@ -29,63 +48,55 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
             }
             user.Languages = langs;
 
-            return user;
-        }
-
-        [HttpGet]
-        public object GetLanguages()
-        {
-            var db = DatabaseContext.Database;
-            var results = db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage"));
-            return results;
-        }
-
-        [HttpGet]
-        public object GetRole(int id)
-        {
-            var userRoleHelper = new UserRoleHelper(DatabaseContext.Database);
-
-            return userRoleHelper.GetUserRole(id);
+            return new
+            {
+                user,
+                languages = _db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage")),
+                role = _urh.GetUserRole(id)
+            };
         }
 
         [HttpPost]
-        public void AddLanguage(int userId, int langId)
+        public void AddLanguages(int userId, IEnumerable<int> languages)
         {
-            var db = DatabaseContext.Database;
+            System.Diagnostics.Debug.WriteLine(userId);
+            System.Diagnostics.Debug.Write(languages);
 
-            var existingData = db.FirstOrDefault<UserLanguage>(new Sql("SELECT * FROM dbo.simpleTranslationUserLanguages WHERE id=@tag1 AND languageId=@tag2", new
-            {
-                tag1 = userId,
-                tag2 = langId
-            }));
+            if (!_urh.IsEditor(UmbracoContext.Security.GetUserId()))
+                return;
+        }
 
-            if (existingData == null)
+        [HttpPost]
+        public void ChangeLanguages(SettingsDTO payload)
+        {
+            if (!_urh.IsEditor(UmbracoContext.Security.GetUserId()))
+                return;
+
+            foreach (var lang in payload.AddLanguages)
             {
-                var data = new UserLanguage
+                var existingData = _db.FirstOrDefault<UserLanguage>(new Sql().Select("*").From("dbo.simpleTranslationUserLanguages").Where("id=@tag1 AND languageId=@tag2", new
                 {
-                    Id = userId,
-                    LanguageId = langId
-                };
-                db.Insert(data);
+                    tag1 = payload.UserId,
+                    tag2 = lang
+                }));
+
+                if (existingData == null)
+                {
+                    var data = new UserLanguage
+                    {
+                        Id = payload.UserId,
+                        LanguageId = lang
+                    };
+                    _db.Insert(data);
+                }
             }
-        }
 
-        [HttpPost]
-        public void RemoveLanguage(int userId, int langId)
-        {
-            var db = DatabaseContext.Database;
-
-            var existingData = db.FirstOrDefault<UserLanguage>(new Sql("SELECT * FROM dbo.simpleTranslationUserLanguages WHERE id=@tag1 AND languageId=@tag2", new
+            foreach (var lang in payload.RemoveLanguages)
             {
-                tag1 = userId,
-                tag2 = langId
-            }));
-
-            if (existingData != null)
-            {
-                db.Delete<UserLanguage>(new Sql().Where("pk=@tag", new
+                _db.Delete<UserLanguage>(new Sql().Where("id=@tag1 AND languageId=@tag2", new
                 {
-                    tag = existingData.PrimaryKey
+                    tag1 = payload.UserId,
+                    tag2 = lang
                 }));
             }
         }
@@ -93,8 +104,10 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
         [HttpPost]
         public void SetRole(int userId, int roleId)
         {
-            var db = DatabaseContext.Database;
-            var existingData = db.FirstOrDefault<UserRole>(new Sql("SELECT * FROM dbo.simpleTranslationUserRoles WHERE id=@tag", new
+            if (!_urh.IsEditor(UmbracoContext.Security.GetUserId()) && UmbracoContext.Security.CurrentUser.UserType.Alias == "admin" && UmbracoContext.Security.CurrentUser.UserType.Alias == "editor")
+                return;
+
+            var existingData = _db.FirstOrDefault<UserRole>(new Sql("SELECT * FROM dbo.simpleTranslationUserRoles WHERE id=@tag", new
             {
                 tag = userId,
             }));
@@ -102,7 +115,7 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
             if (existingData != null)
             {
                 existingData.Role = roleId;
-                db.Save(existingData);
+                _db.Save(existingData);
             }
             else
             {
@@ -111,7 +124,7 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
                     Id = userId,
                     Role = roleId
                 };
-                db.Insert(data);
+                _db.Insert(data);
             }
         }
     }

@@ -39,7 +39,7 @@
                         <span>
                             <div ng-repeat="x in languages">
                                 <label ng-if="user.languages.indexOf(x.id) == -1"><input type="checkbox" checked="checked" ng-change="toggleSelectionAdd(x.id)" ng-checked=false ng-model="master">{{ x.languageCultureName }}</label>
-                                <label ng-if="user.languages.indexOf(x.id) != -1"><input type="checkbox" checked="checked" ng-change="toggleSelectionRemove(x.id)" ng-checked=true ng-model="master">{{ x.languageCultureName }}</label>
+                                <label ng-if="user.languages.indexOf(x.id) > -1"><input type="checkbox" checked="checked" ng-change="toggleSelectionRemove(x.id)" ng-checked=true ng-model="master">{{ x.languageCultureName }}</label>
                             </div>
                         </span>
                     </div>

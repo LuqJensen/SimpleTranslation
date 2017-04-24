@@ -11,6 +11,7 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
     public class PairsController : UmbracoAuthorizedApiController
     {
         private Database _db;
+        private UserRoleHelper _urh;
 
         protected override void Dispose(bool disposing)
         {
@@ -24,6 +25,7 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
         public PairsController()
         {
             _db = DatabaseContext.Database;
+            _urh = new UserRoleHelper(_db);
         }
 
         [HttpGet]
@@ -31,45 +33,39 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
         {
             var results = _db.Fetch<PairTranslations>(new Sql().Select("*").From("dbo.cmsDictionary"));
 
-            var resultsLangText = _db.Fetch<TranslationText>(new Sql().Select("*").From("dbo.cmsLanguageText")).ToLookup(x => x.UniqueId, x => x);
+            var translations = _db.Fetch<TranslationText>(new Sql().Select("*").From("dbo.cmsLanguageText")).ToLookup(x => x.UniqueId, x => x);
+
             foreach (var v in results)
             {
-                v.TranslationTexts = new Dictionary<int, TranslationText>();
-                foreach (var x in resultsLangText[v.UniqueId])
-                {
-                    v.TranslationTexts.Add(x.LangId, x);
-                }
+                v.TranslationTexts = translations[v.UniqueId].ToDictionary(x => x.LangId, x => x.Value);
             }
+
             var subNodes = results.Where(x => x.Parent != null).ToLookup(x => x.Parent.Value, x => x);
             var rootNodes = results.Where(x => x.Parent == null);
-            return BuildDictionary(rootNodes, subNodes);
+            var pairs = BuildDictionary(rootNodes, subNodes);
+
+            return new
+            {
+                pairs,
+                role = _urh.GetUserRole(UmbracoContext.Security.GetUserId())
+            };
         }
 
         [HttpGet]
-        public object GetAllLanguages()
+        public object GetMyLanguages()
         {
-            var results = _db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage"));
-            return results;
-        }
-
-        public object GetTranslatorLanguages()
-        {
-            var results = _db.Fetch<Language>(new Sql().Select("l.Id AS id, l.languageCultureName AS languageCultureName").From("dbo.umbracoLanguage l LEFT OUTER JOIN dbo.simpleTranslationUserLanguages u ON l.id=u.languageId").Where("u.id=@tag", new
+            if (_urh.IsEditor(UmbracoContext.Security.GetUserId()))
             {
-                tag = UmbracoContext.Security.CurrentUser.Id
-            }));
-            return results;
-        }
-
-        [HttpGet]
-        public object GetRole()
-        {
-            var user = _db.FirstOrDefault<UserRole>(new Sql().Select("*").From("dbo.simpleTranslationUserRoles").Where("id=@tag", new
+                return _db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage"));
+            }
+            if (_urh.IsTranslator(UmbracoContext.Security.GetUserId()))
             {
-                tag = UmbracoContext.Security.CurrentUser.Id
-            }));
-
-            return user?.Role ?? 0;
+                return _db.Fetch<Language>(new Sql().Select("l.Id AS id, l.languageCultureName AS languageCultureName").From("dbo.umbracoLanguage l LEFT OUTER JOIN dbo.simpleTranslationUserLanguages u ON l.id=u.languageId").Where("u.id=@tag", new
+                {
+                    tag = UmbracoContext.Security.GetUserId()
+                }));
+            }
+            return null;
         }
 
         [HttpGet]
@@ -83,6 +79,9 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
         [HttpPost]
         public void SendToTranslation(IEnumerable<TranslationTask> tasks)
         {
+            if (!_urh.IsEditor(UmbracoContext.Security.GetUserId()))
+                return;
+
             foreach (var t in tasks)
             {
                 var existingData = _db.FirstOrDefault<TranslationTask>(new Sql("SELECT * FROM dbo.simpleTranslationTasks WHERE id=@tag1 AND languageId=@tag2", new
@@ -101,6 +100,9 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
         [HttpPost]
         public void SendToTranslationWholeLanguage(int langId)
         {
+            if (!_urh.IsEditor(UmbracoContext.Security.GetUserId()))
+                return;
+
             var keys = _db.Fetch<Pair>(new Sql().Select("id").From("dbo.cmsDictionary"));
 
             foreach (var key in keys)
@@ -126,6 +128,9 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
         [HttpPost]
         public void CreateProposal(int langId, Guid uniqueId, string value)
         {
+            if (!_urh.CanUseSimpleTranslation(UmbracoContext.Security.GetUserId()))
+                return;
+
             _db.Insert("dbo.simpleTranslationProposals", "pk", new TranslationProposal
             {
                 LanguageId = langId,

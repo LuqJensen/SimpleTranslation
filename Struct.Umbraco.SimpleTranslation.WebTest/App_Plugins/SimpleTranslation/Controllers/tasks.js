@@ -7,7 +7,7 @@ app.controller("SimpleTranslation.Tasks.Controller", function($scope, $http, $ti
             // Instruct Angular to execute this on next digest. Workaround for Angular not updating regularly when not having focus due to dialogs.
             $timeout(function() {
                 $scope.tasks = response.tasks;
-                $scope.canDiscard = response.canDiscard;
+                $scope.isEditor = response.isEditor;
                 $scope.languages = response.languages;
                 $scope.selectedLanguage = $scope.languages[0].id;
             });
