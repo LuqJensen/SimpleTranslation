@@ -40,13 +40,9 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
                 v.TranslationTexts = translations[v.UniqueId].ToDictionary(x => x.LangId, x => x.Value);
             }
 
-            var subNodes = results.Where(x => x.Parent != null).ToLookup(x => x.Parent.Value, x => x);
-            var rootNodes = results.Where(x => x.Parent == null);
-            var pairs = BuildDictionary(rootNodes, subNodes);
-
             return new
             {
-                pairs,
+                pairs = results,
                 role = _urh.GetUserRole(UmbracoContext.Security.GetUserId())
             };
         }
@@ -139,32 +135,6 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
                 Value = value,
                 Timestamp = DateTime.UtcNow
             });
-        }
-
-        private Dictionary<Guid, PairTranslations> BuildDictionary(IEnumerable<PairTranslations> rootNodes, ILookup<Guid, PairTranslations> subNodes)
-        {
-            var nodes = new Dictionary<Guid, PairTranslations>();
-
-            foreach (var v in rootNodes)
-            {
-                nodes.Add(v.UniqueId, v);
-                BuildDictionary(v, subNodes);
-            }
-            return nodes;
-        }
-
-        private void BuildDictionary(PairTranslations currentNode, ILookup<Guid, PairTranslations> subNodes)
-        {
-            var children = subNodes[currentNode.UniqueId];
-            if (children.Any())
-            {
-                currentNode.Children = new Dictionary<Guid, PairTranslations>();
-                foreach (var v in children)
-                {
-                    currentNode.Children.Add(v.UniqueId, v);
-                    BuildDictionary(v, subNodes);
-                }
-            }
         }
     }
 }

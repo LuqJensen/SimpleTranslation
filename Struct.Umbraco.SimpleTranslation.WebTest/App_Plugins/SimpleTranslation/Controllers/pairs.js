@@ -3,35 +3,14 @@
 app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $timeout) {
 
     getTranslatableKeys();
-    getRole();
     getTranslationTasks();
     getMyLanguages();
 
     function getTranslatableKeys() {
         $http.get('/umbraco/backoffice/api/Pairs/GetTranslatableKeys').success(function(response) {
             $scope.role = response.role;
-
-            var keys = [];
-            for (var object in response.pairs) {
-                if (response.hasOwnProperty(object)) {
-                    loop(response[object], keys);
-                }
-            }
-            $scope.keys = keys;
+            $scope.keys = response.pairs;
         });
-    }
-
-    function loop(object, keys) {
-        keys.push(object);
-        if (object.children) {
-            angular.forEach(object.children, function(values) {
-                loop(values, keys);
-            });
-        }
-    }
-
-    function getRole() {
-        $http.get('/umbraco/backoffice/api/Pairs/GetRole').success(function(response) {});
     }
 
     function getMyLanguages() {
