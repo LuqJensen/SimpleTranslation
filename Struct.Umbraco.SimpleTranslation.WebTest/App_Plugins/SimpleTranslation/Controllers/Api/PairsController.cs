@@ -29,47 +29,50 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
         }
 
         [HttpGet]
-        public object GetTranslatableKeys()
+        public object GetViewModel()
         {
-            var results = _db.Fetch<PairTranslations>(new Sql().Select("*").From("dbo.cmsDictionary"));
+            var pairs = _db.Fetch<PairTranslations>(new Sql().Select("*").From("dbo.cmsDictionary"));
+            var translations = GetTranslations();
+            var tasks = GetTasks();
 
-            var translations = _db.Fetch<TranslationText>(new Sql().Select("*").From("dbo.cmsLanguageText")).ToLookup(x => x.UniqueId, x => x);
-
-            foreach (var v in results)
+            foreach (var v in pairs)
             {
                 v.TranslationTexts = translations[v.UniqueId].ToDictionary(x => x.LangId, x => x.Value);
+                v.TranslationTasks = tasks[v.UniqueId].ToDictionary(x => x.LanguageId, x => true);
             }
 
             return new
             {
-                pairs = results,
-                role = _urh.GetUserRole(UmbracoContext.Security.GetUserId())
+                pairs,
+                languages = GetUserLanguages(),
+                isEditor = _urh.IsEditor(UmbracoContext.Security.GetUserId())
             };
         }
 
-        [HttpGet]
-        public object GetMyLanguages()
+        private ILookup<Guid, TranslationText> GetTranslations()
+        {
+            return _db.Fetch<TranslationText>(new Sql().Select("*").From("dbo.cmsLanguageText")).ToLookup(x => x.UniqueId, x => x);
+        }
+
+        private IEnumerable<Language> GetUserLanguages()
         {
             if (_urh.IsEditor(UmbracoContext.Security.GetUserId()))
             {
                 return _db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage"));
             }
-            if (_urh.IsTranslator(UmbracoContext.Security.GetUserId()))
-            {
-                return _db.Fetch<Language>(new Sql().Select("l.Id AS id, l.languageCultureName AS languageCultureName").From("dbo.umbracoLanguage l LEFT OUTER JOIN dbo.simpleTranslationUserLanguages u ON l.id=u.languageId").Where("u.id=@tag", new
+
+            return _db.Fetch<Language>(new Sql()
+                .Select("l.Id AS id, l.languageCultureName AS languageCultureName")
+                .From("dbo.umbracoLanguage l LEFT OUTER JOIN dbo.simpleTranslationUserLanguages u ON l.id=u.languageId")
+                .Where("u.id=@tag", new
                 {
                     tag = UmbracoContext.Security.GetUserId()
                 }));
-            }
-            return null;
         }
 
-        [HttpGet]
-        public object GetTranslationTasks()
+        private ILookup<Guid, TranslationTask> GetTasks()
         {
-            var tasks = _db.Fetch<TranslationTask>(new Sql().Select("*").From("dbo.simpleTranslationTasks"));
-
-            return tasks;
+            return _db.Fetch<TranslationTask>(new Sql().Select("*").From("dbo.simpleTranslationTasks")).ToLookup(x => x.UniqueId, x => x);
         }
 
         [HttpPost]

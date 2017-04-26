@@ -11,5 +11,8 @@ namespace Struct.Umbraco.SimpleTranslation.Models
 
         [JsonProperty("translationTexts")]
         public Dictionary<int, string> TranslationTexts { get; set; }
+
+        [JsonProperty("translationTasks")]
+        public Dictionary<int, bool> TranslationTasks { get; set; }
     }
 }

@@ -10,7 +10,7 @@
                 <div class="btn-toolbar umb-btn-toolbar">
                     <div class="message">
                         <span>{{ sendMessage }}</span>
-                        <a class="btn btn-primary btn" ng-click="sendToTranslation()" ng-show="role == 1">Send To Translation</a>
+                        <a class="btn btn-primary btn" ng-click="sendToTranslation()" ng-show="isEditor">Send To Translation</a>
                     </div>
                 </div>
             </div>
@@ -37,7 +37,7 @@
                 <tbody ng-repeat="x in keys | filter: searchTerm">
                 <tr>
                     <td>
-                        <label><input type="checkbox" ng-model="master" ng-change="toggleSelectionKey(x,master)" ng-show="role == 1"> {{ x.key }}</label>
+                        <label><input type="checkbox" ng-change="checkKey(x)" ng-model="x.master" ng-show="isEditor"> {{ x.key }}</label>
                     </td>
                     <td ng-repeat="lang in languages">
                         <div ng-switch="x.translationTexts[lang.id].length > 0">
@@ -48,7 +48,7 @@
                                 <i style="cursor: pointer;" class="icon-delete icon-red" title="Not translated" ng-click="getNewProposalForm(x, lang)"></i>
                             </span>
                             <span>
-                                <input type="checkbox" ng-change="toggleSelection(x,lang.id)" ng-model="master" ng-show="role == 1 && !isTask(x,lang.id)">
+                                <input type="checkbox" ng-model="x[lang.id]" ng-show="isEditor && !x.translationTasks[lang.id]">
                             </span>
                         </div>
                     </td>
