@@ -15,17 +15,17 @@ namespace Struct.Umbraco.SimpleTranslation
 
         public bool IsEditor(int id)
         {
-            return GetUserRole(id) == 1;
+            return GetUserRole(id) == (int)TranslationRoles.Editor;
         }
 
         public bool IsTranslator(int id)
         {
-            return GetUserRole(id) == 2;
+            return GetUserRole(id) == (int)TranslationRoles.Translator;
         }
 
         public bool CanUseSimpleTranslation(int id)
         {
-            return GetUserRole(id) > 0;
+            return GetUserRole(id) > (int)TranslationRoles.None;
         }
 
         public int GetUserRole(int id)

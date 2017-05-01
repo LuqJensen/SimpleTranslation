@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using Struct.Umbraco.SimpleTranslation.Models;
+using Struct.Umbraco.SimpleTranslation.ViewModels;
 using Umbraco.Core.Persistence;
 using Umbraco.Web.WebApi;
 
@@ -29,102 +30,66 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
         }
 
         [HttpGet]
-        public object GetUser(int id)
+        public UserSettingsView GetViewModel(int id)
         {
-            var user = _db.FirstOrDefault<UserLanguages>(new Sql().Select("*").From("dbo.umbracoUser").Where("id=@tag", new
+            var user = _db.FirstOrDefault<User>(new Sql().Select("*").From("dbo.umbracoUser").Where("id=@tag", new
             {
                 tag = id
             }));
+
+
             var languages = _db.Fetch<UserLanguage>(new Sql().Select("*").From("dbo.simpleTranslationUserLanguages").Where("id=@tag", new
             {
                 tag = id
             }));
 
-            List<int> langs = new List<int>();
-
-            foreach (var v in languages)
+            var model = new UserSettingsView
             {
-                langs.Add(v.LanguageId);
-            }
-            user.Languages = langs;
-
-            return new
-            {
-                user,
-                languages = _db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage")),
-                role = _urh.GetUserRole(id)
+                User = user,
+                UserLanguages = languages.Select(x => x.LanguageId),
+                Languages = _db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage")),
+                UserRole = _urh.GetUserRole(id),
+                Roles = TranslationRole.TranslationRoles
             };
+
+            return model;
         }
 
         [HttpPost]
-        public void AddLanguages(int userId, IEnumerable<int> languages)
+        public void SaveSettings(SettingsDTO payload)
         {
-            System.Diagnostics.Debug.WriteLine(userId);
-            System.Diagnostics.Debug.Write(languages);
-
-            if (!_urh.IsEditor(UmbracoContext.Security.GetUserId()))
-                return;
-        }
-
-        [HttpPost]
-        public void ChangeLanguages(SettingsDTO payload)
-        {
-            if (!_urh.IsEditor(UmbracoContext.Security.GetUserId()))
-                return;
-
-            foreach (var lang in payload.AddLanguages)
+            var existingUserRole = _db.FirstOrDefault<UserRole>(new Sql("SELECT * FROM dbo.simpleTranslationUserRoles WHERE id=@tag", new
             {
-                var existingData = _db.FirstOrDefault<UserLanguage>(new Sql().Select("*").From("dbo.simpleTranslationUserLanguages").Where("id=@tag1 AND languageId=@tag2", new
-                {
-                    tag1 = payload.UserId,
-                    tag2 = lang
-                }));
-
-                if (existingData == null)
-                {
-                    var data = new UserLanguage
-                    {
-                        Id = payload.UserId,
-                        LanguageId = lang
-                    };
-                    _db.Insert(data);
-                }
-            }
-
-            foreach (var lang in payload.RemoveLanguages)
-            {
-                _db.Delete<UserLanguage>(new Sql().Where("id=@tag1 AND languageId=@tag2", new
-                {
-                    tag1 = payload.UserId,
-                    tag2 = lang
-                }));
-            }
-        }
-
-        [HttpPost]
-        public void SetRole(int userId, int roleId)
-        {
-            if (!_urh.IsEditor(UmbracoContext.Security.GetUserId()) && UmbracoContext.Security.CurrentUser.UserType.Alias == "admin" && UmbracoContext.Security.CurrentUser.UserType.Alias == "editor")
-                return;
-
-            var existingData = _db.FirstOrDefault<UserRole>(new Sql("SELECT * FROM dbo.simpleTranslationUserRoles WHERE id=@tag", new
-            {
-                tag = userId,
+                tag = payload.UserId
             }));
 
-            if (existingData != null)
+            if (existingUserRole != null)
             {
-                existingData.Role = roleId;
-                _db.Save(existingData);
+                existingUserRole.Role = payload.UserRole;
+                _db.Save(existingUserRole);
             }
             else
             {
                 var data = new UserRole()
                 {
-                    Id = userId,
-                    Role = roleId
+                    Id = payload.UserId,
+                    Role = payload.UserRole
                 };
                 _db.Insert(data);
+            }
+
+            _db.Delete<UserLanguage>(new Sql().Where("id=@tag1", new
+            {
+                tag1 = payload.UserId
+            }));
+
+            if (payload.UserLanguages.Any())
+            {
+                _db.BulkInsertRecords(payload.UserLanguages.Select(x => new UserLanguage
+                {
+                    Id = payload.UserId,
+                    LanguageId = x
+                }));
             }
         }
     }

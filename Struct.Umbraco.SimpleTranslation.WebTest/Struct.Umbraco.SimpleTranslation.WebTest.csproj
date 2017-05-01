@@ -395,6 +395,8 @@
     <Compile Include="App_Plugins\SimpleTranslation\Models\PairProposals.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\PairTranslations.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\TaskProposal.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\Models\TranslationRole.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\Models\TranslationRoles.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\TranslationTask.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\TranslationProposal.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\TranslationText.cs" />
@@ -402,12 +404,12 @@
     <Compile Include="App_Plugins\SimpleTranslation\Models\Language.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\User.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\UserLanguage.cs" />
-    <Compile Include="App_Plugins\SimpleTranslation\Models\UserLanguages.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\UserRole.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\SimpleTranslationUsersTreeController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\SimpleTranslationTreeController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Startup.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Utility\UserRoleHelper.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\ViewModels\UserSettingsView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
