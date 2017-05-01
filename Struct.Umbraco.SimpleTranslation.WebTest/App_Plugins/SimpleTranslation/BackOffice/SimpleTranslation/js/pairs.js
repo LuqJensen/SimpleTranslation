@@ -72,17 +72,4 @@ app.controller("SimpleTranslation.Pairs.Controller", function($scope, $http, $ti
             }
         });
     }
-
-    $scope.createProposal = function() {
-        event.preventDefault();
-
-        $http.post("/umbraco/backoffice/api/Proposals/CreateProposal",
-        {
-            languageId: $scope.dialogData.language.id,
-            id: $scope.dialogData.key.id,
-            value: $scope.proposedText
-        }).success(function() {
-            UmbClientMgr.closeModalWindow();
-        });
-    };
 });

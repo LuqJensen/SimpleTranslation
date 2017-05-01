@@ -305,6 +305,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\css\simpletranslation.css" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\pairsNewProposal.js" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\pairs.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\partialViews\dialog.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\partialViews\pairsNewProposal.html" />
@@ -312,12 +313,12 @@
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\proposals.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\tasks.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\userSettings.html" />
-    <Content Include="App_Plugins\SimpleTranslation\Controllers\dialog.js" />
-    <Content Include="App_Plugins\SimpleTranslation\Controllers\pairs.js" />
-    <Content Include="App_Plugins\SimpleTranslation\Controllers\proposals.js" />
-    <Content Include="App_Plugins\SimpleTranslation\Controllers\taskProposals.js" />
-    <Content Include="App_Plugins\SimpleTranslation\Controllers\tasks.js" />
-    <Content Include="App_Plugins\SimpleTranslation\Controllers\userSettings.js" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\dialog.js" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\pairs.js" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\proposals.js" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\taskProposals.js" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\tasks.js" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\userSettings.js" />
     <Content Include="packages.config" />
     <Content Include="config\imageprocessor\security.config" />
     <Content Include="config\imageprocessor\processing.config" />
@@ -419,9 +420,7 @@
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

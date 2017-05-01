@@ -1,12 +1,13 @@
 ﻿{
 
 	"javascript": [
-		"~/App_Plugins/SimpleTranslation/Controllers/pairs.js",
-		"~/App_Plugins/SimpleTranslation/Controllers/proposals.js",
-		"~/App_Plugins/SimpleTranslation/Controllers/taskProposals.js",
-		"~/App_Plugins/SimpleTranslation/Controllers/tasks.js",
-		"~/App_Plugins/SimpleTranslation/Controllers/userSettings.js",
-		"~/App_Plugins/SimpleTranslation/Controllers/dialog.js"
+		"~/App_Plugins/SimpleTranslation/BackOffice/SimpleTranslation/js/pairs.js",
+		"~/App_Plugins/SimpleTranslation/BackOffice/SimpleTranslation/js/proposals.js",
+		"~/App_Plugins/SimpleTranslation/BackOffice/SimpleTranslation/js/taskProposals.js",
+		"~/App_Plugins/SimpleTranslation/BackOffice/SimpleTranslation/js/tasks.js",
+		"~/App_Plugins/SimpleTranslation/BackOffice/SimpleTranslation/js/userSettings.js",
+		"~/App_Plugins/SimpleTranslation/BackOffice/SimpleTranslation/js/dialog.js",
+		"~/App_Plugins/SimpleTranslation/BackOffice/SimpleTranslation/js/pairsNewProposal.js"
 	],
   "css": [
     "~/App_Plugins/SimpleTranslation/BackOffice/SimpleTranslation/css/simpletranslation.css"
