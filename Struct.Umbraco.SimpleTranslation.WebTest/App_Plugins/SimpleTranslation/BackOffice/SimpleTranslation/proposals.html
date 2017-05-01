@@ -31,7 +31,7 @@
                     <td>{{ y.value }}</td>
                     <td>{{ y.language }}</td>
                     <td>{{ y.userName }}</td>
-                    <td>{{ y.timestamp | utc | date : 'dd/MM/yy @ HH:mm' }}</td>
+                    <td>{{ y.timestamp| date : 'dd/MM/yy @ HH:mm' }}</td>
                     <td>
                         <a href="#" ng-click="acceptProposal(y, x.translationProposals)">
                             <i class="icon-check icon-green icon-pad-right"></i>

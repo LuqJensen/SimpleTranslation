@@ -48,7 +48,7 @@
                     <td>
                         <a class="link" href="#" ng-click="getProposalsForTask(x.id, x.languageId)">View proposals...</a>
                     </td>
-                    <td>{{ x.latestPersonalProposal.timestamp | utc | date : 'dd/MM/yy @ HH:mm' }}</td>
+                    <td>{{ x.latestPersonalProposal.timestamp | date : 'dd/MM/yy @ HH:mm' }}</td>
                     <td ng-show="isEditor">
                         <a href="#" ng-click="deleteTask(x.primaryKey)">
                             <i class="icon-wrong icon-red"></i>
