@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using Struct.Umbraco.SimpleTranslation.Models;
+using Struct.Umbraco.SimpleTranslation.ViewModels;
 using Umbraco.Core.Persistence;
 using Umbraco.Web.WebApi;
 
@@ -10,150 +11,115 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
 {
     public class PairsController : UmbracoAuthorizedApiController
     {
-        [HttpGet]
-        public object GetTranslatableKeys()
-        {
-            var db = DatabaseContext.Database;
-            var results = db.Fetch<PairTranslations>(new Sql().Select("*").From("dbo.cmsDictionary"));
+        private Database _db;
+        private UserRoleHelper _urh;
 
-            var resultsLangText = db.Fetch<TranslationText>(new Sql().Select("*").From("dbo.cmsLanguageText")).ToLookup(x => x.UniqueId, x => x);
-            foreach (var v in results)
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                v.TranslationTexts = new Dictionary<int, TranslationText>();
-                foreach (var x in resultsLangText[v.UniqueId])
-                {
-                    v.TranslationTexts.Add(x.LangId, x);
-                }
+                _db?.Dispose();
             }
-            var subNodes = results.Where(x => x.Parent != null).ToLookup(x => x.Parent.Value, x => x);
-            var rootNodes = results.Where(x => x.Parent == null);
-            return BuildDictionary(rootNodes, subNodes);
+            base.Dispose(disposing);
+        }
+
+        public PairsController()
+        {
+            _db = DatabaseContext.Database;
+            _urh = new UserRoleHelper(_db);
         }
 
         [HttpGet]
-        public object GetAllLanguages()
+        public PairsView GetViewModel()
         {
-            var db = DatabaseContext.Database;
-            var results = db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage"));
-            return results;
-        }
+            var pairs = _db.Fetch<PairTranslations>(new Sql().Select("*").From("dbo.cmsDictionary"));
+            var translations = GetTranslations();
+            var tasks = GetTasks();
 
-        public object GetTranslatorLanguages()
-        {
-            var db = DatabaseContext.Database;
-            var results = db.Fetch<Language>(new Sql().Select("l.Id AS id, l.languageCultureName AS languageCultureName").From("dbo.umbracoLanguage l LEFT OUTER JOIN dbo.simpleTranslationUserLanguages u ON l.id=u.languageId").Where("u.id=@tag", new
+            foreach (var v in pairs)
             {
-                tag = UmbracoContext.Security.CurrentUser.Id
-            }));
-            return results;
-        }
+                v.TranslationTexts = translations[v.UniqueId].ToDictionary(x => x.LangId, x => x.Value);
+                v.TranslationTasks = tasks[v.UniqueId].ToDictionary(x => x.LanguageId, x => true);
+            }
 
-        [HttpGet]
-        public object GetRole()
-        {
-            var db = DatabaseContext.Database;
-            var user = db.FirstOrDefault<UserRole>(new Sql().Select("*").From("dbo.simpleTranslationUserRoles").Where("id=@tag", new
+            return new PairsView
             {
-                tag = UmbracoContext.Security.CurrentUser.Id
-            }));
-
-            return user?.Role ?? 0;
+                Pairs = pairs,
+                Languages = GetUserLanguages(),
+                IsEditor = _urh.IsEditor(UmbracoContext.Security.GetUserId())
+            };
         }
 
-        [HttpGet]
-        public object GetTranslationTasks()
+        private ILookup<Guid, TranslationText> GetTranslations()
         {
-            var db = DatabaseContext.Database;
-            var tasks = db.Fetch<TranslationTask>(new Sql().Select("*").From("dbo.simpleTranslationTasks"));
+            return _db.Fetch<TranslationText>(new Sql().Select("*").From("dbo.cmsLanguageText")).ToLookup(x => x.UniqueId, x => x);
+        }
 
-            return tasks;
+        private IEnumerable<Language> GetUserLanguages()
+        {
+            if (_urh.IsEditor(UmbracoContext.Security.GetUserId()))
+            {
+                return _db.Fetch<Language>(new Sql().Select("*").From("dbo.umbracoLanguage"));
+            }
+
+            return _db.Fetch<Language>(new Sql()
+                .Select("l.Id AS id, l.languageCultureName AS languageCultureName")
+                .From("dbo.umbracoLanguage l LEFT OUTER JOIN dbo.simpleTranslationUserLanguages u ON l.id=u.languageId")
+                .Where("u.id=@tag", new
+                {
+                    tag = UmbracoContext.Security.GetUserId()
+                }));
+        }
+
+        private ILookup<Guid, TranslationTask> GetTasks()
+        {
+            return _db.Fetch<TranslationTask>(new Sql().Select("*").From("dbo.simpleTranslationTasks")).ToLookup(x => x.UniqueId, x => x);
         }
 
         [HttpPost]
-        public void SendToTranslation(Guid id, int langId)
+        public void SendToTranslation(IEnumerable<TranslationTask> tasks)
         {
-            var db = DatabaseContext.Database;
+            if (!_urh.IsEditor(UmbracoContext.Security.GetUserId()))
+                return;
 
-            var existingData = db.FirstOrDefault<TranslationTask>(new Sql("SELECT * FROM dbo.simpleTranslationTasks WHERE id=@tag1 AND languageId=@tag2", new
+
+            var existingData = _db.Fetch<TranslationTask>(new Sql("SELECT * FROM dbo.simpleTranslationTasks WHERE id IN (@tag1) AND languageId IN (@tag2)", new
             {
-                tag1 = id,
-                tag2 = langId
+                tag1 = tasks.Select(x => x.UniqueId).Distinct(),
+                tag2 = tasks.Select(x => x.LanguageId).Distinct()
             }));
 
-            if (existingData == null)
+            var newData = tasks.Where(x => !existingData.Any(y => x.UniqueId == y.UniqueId && x.LanguageId == y.LanguageId));
+
+            if (newData.Any())
             {
-                var data = new TranslationTask
-                {
-                    UniqueId = id,
-                    LanguageId = langId
-                };
-                db.Insert(data);
+                _db.BulkInsertRecords(newData);
             }
         }
 
         [HttpPost]
         public void SendToTranslationWholeLanguage(int langId)
         {
-            var db = DatabaseContext.Database;
-            var keys = db.Fetch<Pair>(new Sql().Select("id").From("dbo.cmsDictionary"));
+            if (!_urh.IsEditor(UmbracoContext.Security.GetUserId()))
+                return;
 
-            foreach (var key in keys)
+            var keys = _db.Fetch<Pair>(new Sql().Select("id").From("dbo.cmsDictionary"));
+
+            var existingData = _db.Fetch<TranslationTask>(new Sql("SELECT * FROM dbo.simpleTranslationTasks WHERE id IN (@tag1) AND languageId=@tag2", new
             {
-                var existingData = db.FirstOrDefault<TranslationTask>(new Sql("SELECT * FROM dbo.simpleTranslationTasks WHERE id=@tag1 AND languageId=@tag2", new
-                {
-                    tag1 = key.UniqueId,
-                    tag2 = langId
-                }));
+                tag1 = keys.Select(x => x.UniqueId),
+                tag2 = langId
+            }));
 
-                if (existingData == null)
-                {
-                    var data = new TranslationTask
-                    {
-                        UniqueId = key.UniqueId,
-                        LanguageId = langId
-                    };
-                    db.Insert(data);
-                }
-            }
-        }
-
-        [HttpPost]
-        public void CreateProposal(int langId, Guid uniqueId, string value)
-        {
-            var db = DatabaseContext.Database;
-            db.Insert("dbo.simpleTranslationProposals", "pk", new TranslationProposal
+            var newData = keys.Where(x => !existingData.Any(y => x.UniqueId == y.UniqueId)).Select(x => new TranslationTask
             {
-                LanguageId = langId,
-                UniqueId = uniqueId,
-                UserId = UmbracoContext.Security.GetUserId(),
-                Value = value,
-                Timestamp = DateTime.UtcNow
+                UniqueId = x.UniqueId,
+                LanguageId = langId
             });
-        }
 
-        private Dictionary<Guid, PairTranslations> BuildDictionary(IEnumerable<PairTranslations> rootNodes, ILookup<Guid, PairTranslations> subNodes)
-        {
-            var nodes = new Dictionary<Guid, PairTranslations>();
-
-            foreach (var v in rootNodes)
+            if (newData.Any())
             {
-                nodes.Add(v.UniqueId, v);
-                BuildDictionary(v, subNodes);
-            }
-            return nodes;
-        }
-
-        private void BuildDictionary(PairTranslations currentNode, ILookup<Guid, PairTranslations> subNodes)
-        {
-            var children = subNodes[currentNode.UniqueId];
-            if (children.Any())
-            {
-                currentNode.Children = new Dictionary<Guid, PairTranslations>();
-                foreach (var v in children)
-                {
-                    currentNode.Children.Add(v.UniqueId, v);
-                    BuildDictionary(v, subNodes);
-                }
+                _db.BulkInsertRecords(newData);
             }
         }
     }

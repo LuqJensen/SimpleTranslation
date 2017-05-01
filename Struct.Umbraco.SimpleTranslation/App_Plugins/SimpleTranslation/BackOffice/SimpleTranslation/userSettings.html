@@ -22,26 +22,19 @@
                 <div class="umb-el-wrap">
                     <label class="control-label">Role</label>
                     <div class="controls controls-row">
-                        <select ng-model="newRole">
-                            <option value="0">None</option>
-                            <option value="1">Editor</option>
-                            <option value="2">Translator</option>
-                        </select>
+                        <select ng-model="selectedRole" ng-options="option.id as option.title for option in roles"></select>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="umb-pane" ng-if="newRole == 2">
+        <div class="umb-pane" ng-if="selectedRole == 2">
             <div class="control-group umb-control-group">
                 <div class="umb-el-wrap">
                     <label class="control-label">Translation Languages</label>
                     <div class="controls controls-row">
-                        <span>
-                            <div ng-repeat="x in languages">
-                                <label ng-if="user.languages.indexOf(x.id) == -1"><input type="checkbox" checked="checked" ng-change="toggleSelectionAdd(x.id)" ng-checked=false ng-model="master">{{ x.languageCultureName }}</label>
-                                <label ng-if="user.languages.indexOf(x.id) != -1"><input type="checkbox" checked="checked" ng-change="toggleSelectionRemove(x.id)" ng-checked=true ng-model="master">{{ x.languageCultureName }}</label>
-                            </div>
-                        </span>
+                        <div ng-repeat="x in languages">
+                            <label><input type="checkbox" ng-init="x.checked = (selectedLanguages.indexOf(x.id) >= 0)" ng-model="x.checked">{{ x.languageCultureName }}</label>
+                        </div>
                     </div>
                 </div>
             </div>

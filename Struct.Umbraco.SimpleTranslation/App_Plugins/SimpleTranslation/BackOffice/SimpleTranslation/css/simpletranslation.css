@@ -17,8 +17,3 @@ a.link { color: blue; }
     font-weight: bold;
     text-align: right;
 }
-
-.umb-modal.fade.in {
-    width: 50% !important;
-    margin-left: -50% !important;
-}

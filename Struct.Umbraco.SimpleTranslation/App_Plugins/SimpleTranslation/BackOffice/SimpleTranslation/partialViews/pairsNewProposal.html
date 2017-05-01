@@ -1,37 +1,41 @@
-﻿<div ng-controller="SimpleTranslation.Pairs.Controller">
-<div class="umb-panel-header umb-editor-header">
-    <div class="umb-panel-header-content-wrapper">
-        <div class="umb-panel-header-content">
-            <div class="umb-panel-header-left-side">
-                <div class="umb-panel-header-title-wrapper">
-                    <div class="umb-panel-header-name">New Proposal</div>
+﻿<div ng-controller="SimpleTranslation.NewProposal.Controller">
+    <div class="umb-panel-header umb-editor-header">
+        <div class="umb-panel-header-content-wrapper">
+            <div class="umb-panel-header-content">
+                <div class="umb-panel-header-left-side">
+                    <div class="umb-panel-header-title-wrapper">
+                        <div class="umb-panel-header-name">New Proposal</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<div class="umb-panel-body umb-scrollable row-fluid">
-    <div class="umb-pane">
-        <p>
-            <b>Key:</b> {{dialogData.key.key}}
-        </p>
-        <p>
-            <b>Language:</b> {{dialogData.language.languageCultureName}}
-        </p>
-        <p>
-            <b>Current Translation:</b> {{dialogData.key.translationTexts[dialogData.language.id].value}}
-        </p>
-        <br/>
-
-        <div>
+    <div class="umb-panel-body umb-scrollable row-fluid">
+        <div class="umb-pane">
             <p>
-                <b>Your Proposal:</b>
+                <b>Key:</b> {{dialogData.key.key}}
             </p>
+            <p>
+                <b>Language:</b> {{dialogData.language.languageCultureName}}
+            </p>
+            <p>
+                <b>Current Translation:</b> {{dialogData.key.translationTexts[dialogData.language.id].value}}
+            </p>
+            <br/>
+
             <div>
-                <input ng-model="proposedText" type="text"/>
-            </div>
-            <div>
-                <a class="btn btn-primary btn" ng-click="createProposal()">CreateProposal</a>
+                <p>
+                    <b>Your Proposal:</b>
+                </p>
+                <form ng-submit="createProposal()">
+                    <div>
+                        <input ng-model="proposedText" type="text" required/>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" type="submit">Create proposal</button>
+                        <button class="btn btn-danger" type="button" ng-click="close()">Cancel</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

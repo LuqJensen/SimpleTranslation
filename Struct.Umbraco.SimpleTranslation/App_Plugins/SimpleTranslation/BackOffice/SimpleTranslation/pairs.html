@@ -10,7 +10,7 @@
                 <div class="btn-toolbar umb-btn-toolbar">
                     <div class="message">
                         <span>{{ sendMessage }}</span>
-                        <a class="btn btn-primary btn" ng-click="sendToTranslation()" ng-if="role == 1">Send To Translation</a>
+                        <a class="btn btn-primary btn" ng-click="sendToTranslation()" ng-show="isEditor">Send To Translation</a>
                     </div>
                 </div>
             </div>
@@ -37,19 +37,19 @@
                 <tbody ng-repeat="x in keys | filter: searchTerm">
                 <tr>
                     <td>
-                        <label><input type="checkbox" ng-model="master" ng-change="toggleSelectionKey(x,master)"> {{ x.key }}</label>
+                        <label><input type="checkbox" ng-change="checkKey(x)" ng-model="x.master" ng-show="isEditor"> {{ x.key }}</label>
                     </td>
                     <td ng-repeat="lang in languages">
-                        {{ getTranslation(x,lang.id) }}
-                        <div ng-switch="!!translation">
-                            <div ng-switch-when="true">
-                                <i style="cursor: pointer;" class="icon-check icon-green" title="{{ translation }}" ng-click="getNewProposalForm(x, lang)"></i>
-                                <input type="checkbox" ng-change="toggleSelection(x,lang.id)" ng-model="master" ng-if="!isTask(x,lang.id) && role == 1">
-                            </div>
-                            <div ng-switch-default>
-                                <i style="cursor: pointer;" class="icon-delete icon-red" ng-click="getNewProposalForm(x, lang)"></i>
-                                <input type="checkbox" ng-change="toggleSelection(x,lang.id)" ng-model="master" ng-if="!isTask(x,lang.id) && role == 1">
-                            </div>
+                        <div ng-switch="x.translationTexts[lang.id].length > 0">
+                            <a ng-switch-when="true" href="#" ng-click="getNewProposalForm(x, lang)">
+                                <i class="icon-check icon-green" title="{{ x.translationTexts[lang.id] }}"></i>
+                            </a>
+                            <a ng-switch-default href="#" ng-click="getNewProposalForm(x, lang)">
+                                <i class="icon-wrong icon-red" title="Not translated"></i>
+                            </a>
+                            <span>
+                                <input type="checkbox" ng-model="x[lang.id]" ng-show="isEditor && !x.translationTasks[lang.id]">
+                            </span>
                         </div>
                     </td>
                 </tr>

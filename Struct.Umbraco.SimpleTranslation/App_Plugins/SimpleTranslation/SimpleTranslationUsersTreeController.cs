@@ -22,18 +22,20 @@ namespace Struct.Umbraco.SimpleTranslation
         protected override TreeNodeCollection GetTreeNodes(string id, FormDataCollection queryStrings)
         {
             TreeNodeCollection nodes = new TreeNodeCollection();
-
-            var userRoleHelper = new UserRoleHelper(DatabaseContext.Database);
-
-            if (id == "-1")
+            using (var db = DatabaseContext.Database)
             {
-                foreach (var user in userRoleHelper.GetUsers())
-                {
-                    nodes.Add(CreateTreeNode("nodeId", id, queryStrings, user.UserName, "icon-user", CreateRoute("userSettings", user.Id)));
-                }
-            }
+                var userRoleHelper = new UserRoleHelper(db);
 
-            return nodes;
+                if (id == "-1")
+                {
+                    foreach (var user in userRoleHelper.GetUsers())
+                    {
+                        nodes.Add(CreateTreeNode("nodeId", id, queryStrings, user.UserName, "icon-user", CreateRoute("userSettings", user.Id)));
+                    }
+                }
+
+                return nodes;
+            }
         }
 
         protected override MenuItemCollection GetMenuForNode(string id, FormDataCollection queryStrings)

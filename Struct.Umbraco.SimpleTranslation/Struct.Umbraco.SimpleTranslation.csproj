@@ -265,18 +265,23 @@
     <Compile Include="App_Plugins\SimpleTranslation\Models\Pair.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\PairProposals.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\PairTranslations.cs" />
-    <Compile Include="App_Plugins\SimpleTranslation\Models\TaskProposal.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\Models\SettingsDTO.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\TranslationProposal.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\Models\TranslationRole.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\Models\TranslationRoles.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\TranslationTask.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\TranslationText.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\User.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\UserLanguage.cs" />
-    <Compile Include="App_Plugins\SimpleTranslation\Models\UserLanguages.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\UserRole.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\SimpleTranslationTreeController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\SimpleTranslationUsersTreeController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Startup.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Utility\UserRoleHelper.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\ViewModels\PairsView.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\ViewModels\ProposalsView.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\ViewModels\TasksView.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\ViewModels\UserSettingsView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -291,18 +296,20 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\css\simpletranslation.css" />
-    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\bootbox.min.js" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\dialog.js" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\pairs.js" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\pairsNewProposal.js" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\proposals.js" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\taskProposals.js" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\tasks.js" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\userSettings.js" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\pairs.html" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\partialViews\dialog.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\partialViews\pairsNewProposal.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\partialViews\taskproposals.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\proposals.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\tasks.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\userSettings.html" />
-    <Content Include="App_Plugins\SimpleTranslation\Controllers\pairs.js" />
-    <Content Include="App_Plugins\SimpleTranslation\Controllers\proposals.js" />
-    <Content Include="App_Plugins\SimpleTranslation\Controllers\taskProposals.js" />
-    <Content Include="App_Plugins\SimpleTranslation\Controllers\tasks.js" />
-    <Content Include="App_Plugins\SimpleTranslation\Controllers\userSettings.js" />
     <Content Include="App_Plugins\SimpleTranslation\package.manifest" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

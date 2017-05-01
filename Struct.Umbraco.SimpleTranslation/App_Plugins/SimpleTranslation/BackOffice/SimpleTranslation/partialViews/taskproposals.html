@@ -1,4 +1,15 @@
 ﻿<div ng-controller="SimpleTranslation.TaskProposals.Controller">
+    <div class="umb-panel-header umb-editor-header">
+        <div class="umb-panel-header-content-wrapper">
+            <div class="umb-panel-header-content">
+                <div class="umb-panel-header-left-side">
+                    <div class="umb-panel-header-title-wrapper">
+                        <div class="umb-panel-header-name">Proposals</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="umb-panel-body umb-scrollable row-fluid">
         <div class="umb-pane">
             <table class="table">
@@ -12,9 +23,10 @@
                 <tr ng-repeat="x in data">
                     <td>{{ x.value }}</td>
                     <td>{{ x.userName }}</td>
-                    <td>{{ x.timestamp | utc | date : 'dd/MM/yy @ HH:mm' }}</td>
+                    <td>{{ x.timestamp | date : 'dd/MM/yy @ HH:mm' }}</td>
                 </tr>
             </table>
+            <button class="btn btn-danger" type="button" ng-click="close()">Close</button>
         </div>
     </div>
 </div>
