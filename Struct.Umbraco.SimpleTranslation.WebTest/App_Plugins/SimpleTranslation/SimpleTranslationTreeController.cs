@@ -24,21 +24,24 @@ namespace Struct.Umbraco.SimpleTranslation
         {
             TreeNodeCollection nodes = new TreeNodeCollection();
 
-            var userRoleHelper = new UserRoleHelper(DatabaseContext.Database);
-            var userId = UmbracoContext.Security.GetUserId();
-
-            if (id == "-1" && userRoleHelper.CanUseSimpleTranslation(userId))
+            using (var db = DatabaseContext.Database)
             {
-                nodes.Add(CreateTreeNode("1", id, queryStrings, "Translatable strings", "icon-folder", CreateRoute("pairs")));
-                nodes.Add(CreateTreeNode("2", id, queryStrings, "Translation Tasks", "icon-folder", CreateRoute("tasks")));
+                var userRoleHelper = new UserRoleHelper(db);
+                var userId = UmbracoContext.Security.GetUserId();
 
-                if (userRoleHelper.IsEditor(userId))
+                if (id == "-1" && userRoleHelper.CanUseSimpleTranslation(userId))
                 {
-                    nodes.Add(CreateTreeNode("3", id, queryStrings, "Translation Proposals", "icon-folder", CreateRoute("proposals")));
-                }
-            }
+                    nodes.Add(CreateTreeNode("1", id, queryStrings, "Translatable strings", "icon-folder", CreateRoute("pairs")));
+                    nodes.Add(CreateTreeNode("2", id, queryStrings, "Translation Tasks", "icon-folder", CreateRoute("tasks")));
 
-            return nodes;
+                    if (userRoleHelper.IsEditor(userId))
+                    {
+                        nodes.Add(CreateTreeNode("3", id, queryStrings, "Translation Proposals", "icon-folder", CreateRoute("proposals")));
+                    }
+                }
+
+                return nodes;
+            }
         }
 
         protected override MenuItemCollection GetMenuForNode(string id, FormDataCollection queryStrings)
