@@ -1,12 +1,12 @@
 ﻿{
 
 	"javascript": [
-		"~/App_Plugins/SimpleTranslation/Controllers/Pairs.js",
-		"~/App_Plugins/SimpleTranslation/Controllers/Proposals.js",
+		"~/App_Plugins/SimpleTranslation/Controllers/pairs.js",
+		"~/App_Plugins/SimpleTranslation/Controllers/proposals.js",
 		"~/App_Plugins/SimpleTranslation/Controllers/taskProposals.js",
-		"~/App_Plugins/SimpleTranslation/Controllers/Tasks.js",
+		"~/App_Plugins/SimpleTranslation/Controllers/tasks.js",
 		"~/App_Plugins/SimpleTranslation/Controllers/userSettings.js",
-		"~/App_Plugins/SimpleTranslation/BackOffice/SimpleTranslation/js/bootbox.min.js"
+		"~/App_Plugins/SimpleTranslation/Controllers/dialog.js"
 	],
   "css": [
     "~/App_Plugins/SimpleTranslation/BackOffice/SimpleTranslation/css/simpletranslation.css"

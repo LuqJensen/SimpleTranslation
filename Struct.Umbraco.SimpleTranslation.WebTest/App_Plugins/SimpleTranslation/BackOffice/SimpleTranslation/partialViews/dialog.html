@@ -1,0 +1,20 @@
+﻿<div ng-controller="SimpleTranslation.Dialog.Controller">
+    <div class="umb-panel-header umb-editor-header">
+        <div class="umb-panel-header-content-wrapper">
+            <div class="umb-panel-header-content">
+                <div class="umb-panel-header-left-side">
+                    <div class="umb-panel-header-title-wrapper">
+                        <div class="umb-panel-header-name">{{ dialogData.title }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="umb-panel-body umb-scrollable row-fluid">
+        <div class="umb-pane">
+            <p>{{ dialogData.text }}</p>
+            <button class="btn btn-primary" ng-click="dialogData.okCallback()">{{ dialogData.okText }}</button>
+            <button class="btn btn-danger" ng-click="close()">Cancel</button>
+        </div>
+    </div>
+</div>

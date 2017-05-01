@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using Struct.Umbraco.SimpleTranslation.Models;
+using Struct.Umbraco.SimpleTranslation.ViewModels;
 using Umbraco.Core.Persistence;
 using Umbraco.Web.WebApi;
 
@@ -29,7 +30,7 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
         }
 
         [HttpGet]
-        public object GetViewModel()
+        public PairsView GetViewModel()
         {
             var pairs = _db.Fetch<PairTranslations>(new Sql().Select("*").From("dbo.cmsDictionary"));
             var translations = GetTranslations();
@@ -41,11 +42,11 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
                 v.TranslationTasks = tasks[v.UniqueId].ToDictionary(x => x.LanguageId, x => true);
             }
 
-            return new
+            return new PairsView
             {
-                pairs,
-                languages = GetUserLanguages(),
-                isEditor = _urh.IsEditor(UmbracoContext.Security.GetUserId())
+                Pairs = pairs,
+                Languages = GetUserLanguages(),
+                IsEditor = _urh.IsEditor(UmbracoContext.Security.GetUserId())
             };
         }
 
@@ -81,18 +82,18 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
             if (!_urh.IsEditor(UmbracoContext.Security.GetUserId()))
                 return;
 
-            foreach (var t in tasks)
-            {
-                var existingData = _db.FirstOrDefault<TranslationTask>(new Sql("SELECT * FROM dbo.simpleTranslationTasks WHERE id=@tag1 AND languageId=@tag2", new
-                {
-                    tag1 = t.UniqueId,
-                    tag2 = t.LanguageId
-                }));
 
-                if (existingData == null)
-                {
-                    _db.Insert(t);
-                }
+            var existingData = _db.Fetch<TranslationTask>(new Sql("SELECT * FROM dbo.simpleTranslationTasks WHERE id IN (@tag1) AND languageId IN (@tag2)", new
+            {
+                tag1 = tasks.Select(x => x.UniqueId).Distinct(),
+                tag2 = tasks.Select(x => x.LanguageId).Distinct()
+            }));
+
+            var newData = tasks.Where(x => !existingData.Any(y => x.UniqueId == y.UniqueId && x.LanguageId == y.LanguageId));
+
+            if (newData.Any())
+            {
+                _db.BulkInsertRecords(newData);
             }
         }
 
@@ -104,40 +105,22 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
 
             var keys = _db.Fetch<Pair>(new Sql().Select("id").From("dbo.cmsDictionary"));
 
-            foreach (var key in keys)
+            var existingData = _db.Fetch<TranslationTask>(new Sql("SELECT * FROM dbo.simpleTranslationTasks WHERE id IN (@tag1) AND languageId=@tag2", new
             {
-                var existingData = _db.FirstOrDefault<TranslationTask>(new Sql("SELECT * FROM dbo.simpleTranslationTasks WHERE id=@tag1 AND languageId=@tag2", new
-                {
-                    tag1 = key.UniqueId,
-                    tag2 = langId
-                }));
+                tag1 = keys.Select(x => x.UniqueId),
+                tag2 = langId
+            }));
 
-                if (existingData == null)
-                {
-                    var data = new TranslationTask
-                    {
-                        UniqueId = key.UniqueId,
-                        LanguageId = langId
-                    };
-                    _db.Insert(data);
-                }
-            }
-        }
-
-        [HttpPost]
-        public void CreateProposal(int langId, Guid uniqueId, string value)
-        {
-            if (!_urh.CanUseSimpleTranslation(UmbracoContext.Security.GetUserId()))
-                return;
-
-            _db.Insert("dbo.simpleTranslationProposals", "pk", new TranslationProposal
+            var newData = keys.Where(x => !existingData.Any(y => x.UniqueId == y.UniqueId)).Select(x => new TranslationTask
             {
-                LanguageId = langId,
-                UniqueId = uniqueId,
-                UserId = UmbracoContext.Security.GetUserId(),
-                Value = value,
-                Timestamp = DateTime.UtcNow
+                UniqueId = x.UniqueId,
+                LanguageId = langId
             });
+
+            if (newData.Any())
+            {
+                _db.BulkInsertRecords(newData);
+            }
         }
     }
 }

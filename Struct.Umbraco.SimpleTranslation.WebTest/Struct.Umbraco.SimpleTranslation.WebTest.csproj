@@ -305,17 +305,18 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\css\simpletranslation.css" />
-    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\bootbox.min.js" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\pairs.html" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\partialViews\dialog.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\partialViews\pairsNewProposal.html" />
-    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\partialViews\taskproposals.html" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\partialViews\taskProposals.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\proposals.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\tasks.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\userSettings.html" />
-    <Content Include="App_Plugins\SimpleTranslation\Controllers\Pairs.js" />
-    <Content Include="App_Plugins\SimpleTranslation\Controllers\Proposals.js" />
+    <Content Include="App_Plugins\SimpleTranslation\Controllers\dialog.js" />
+    <Content Include="App_Plugins\SimpleTranslation\Controllers\pairs.js" />
+    <Content Include="App_Plugins\SimpleTranslation\Controllers\proposals.js" />
     <Content Include="App_Plugins\SimpleTranslation\Controllers\taskProposals.js" />
-    <Content Include="App_Plugins\SimpleTranslation\Controllers\Tasks.js" />
+    <Content Include="App_Plugins\SimpleTranslation\Controllers\tasks.js" />
     <Content Include="App_Plugins\SimpleTranslation\Controllers\userSettings.js" />
     <Content Include="packages.config" />
     <Content Include="config\imageprocessor\security.config" />
@@ -394,7 +395,6 @@
     <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\UserSettingsController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\PairProposals.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\PairTranslations.cs" />
-    <Compile Include="App_Plugins\SimpleTranslation\Models\TaskProposal.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\TranslationRole.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\TranslationRoles.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\TranslationTask.cs" />
@@ -409,6 +409,9 @@
     <Compile Include="App_Plugins\SimpleTranslation\SimpleTranslationTreeController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Startup.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Utility\UserRoleHelper.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\ViewModels\PairsView.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\ViewModels\ProposalsView.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\ViewModels\TasksView.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\ViewModels\UserSettingsView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -416,7 +419,9 @@
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

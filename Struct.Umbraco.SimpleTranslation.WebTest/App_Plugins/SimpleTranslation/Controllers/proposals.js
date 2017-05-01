@@ -1,17 +1,13 @@
 ﻿var app = angular.module("umbraco");
 
-app.controller("SimpleTranslation.Proposals.Controller", function($scope, $http, $timeout) {
-    function getTranslationProposals() {
-        // Use jquery.post and jquery.get over Angular's http.post and http.get as these will wait for Angular to receive focus after dialogs.
-        $.get('/umbraco/backoffice/api/Proposals/GetTranslationProposals').success(function(response) {
-            // Instruct Angular to execute this on next digest. Workaround for Angular not updating regularly when not having focus due to dialogs.
-            $timeout(function() {
-                $scope.data = response;
-            });
+app.controller("SimpleTranslation.Proposals.Controller", function($scope, $http) {
+    function getViewModel() {
+        $http.get('/umbraco/backoffice/api/Proposals/GetViewModel').success(function(response) {
+            $scope.data = response.proposals;
         });
     }
 
-    getTranslationProposals();
+    getViewModel();
 
     $scope.acceptProposal = function(selectedProposal, keyProposals) {
         event.preventDefault();
@@ -25,14 +21,18 @@ app.controller("SimpleTranslation.Proposals.Controller", function($scope, $http,
             text += "Accepting this proposal will automatically delete " + relatedProposalsCount + " other suggestion(s) for this language.";
         }
 
-        bootbox.confirm(text, function(result) {
-            if (result) {
-                // Use jquery.post and jquery.get over Angular's http.post and http.get as these will wait for Angular to receive focus after dialogs.
-                $.post("/umbraco/backoffice/api/Proposals/AcceptProposal?id=" + selectedProposal.primaryKey).success(function() {
-                    getTranslationProposals();
-                }) /*.error(function(response) {
-                    console.log("response is void atm. TODO: error handling?");
-                })*/;
+        UmbClientMgr.openAngularModalWindow({
+            template: '/App_Plugins/SimpleTranslation/BackOffice/SimpleTranslation/partialViews/dialog.html',
+            dialogData: {
+                text: text,
+                title: "Accept proposal",
+                okText: "Accept",
+                okCallback: function() {
+                    $http.post("/umbraco/backoffice/api/Proposals/AcceptProposal?id=" + selectedProposal.primaryKey).success(function() {
+                        getViewModel();
+                        UmbClientMgr.closeModalWindow();
+                    });
+                }
             }
         });
     }
@@ -40,28 +40,19 @@ app.controller("SimpleTranslation.Proposals.Controller", function($scope, $http,
     $scope.rejectProposal = function(pk) {
         event.preventDefault();
 
-        bootbox.confirm("Are you sure you want to reject this proposal? Doing so will notify the proposer per email.", function(result) {
-            if (result) {
-                // Use jquery.post and jquery.get over Angular's http.post and http.get as these will wait for Angular to receive focus after dialogs.
-                $.post("/umbraco/backoffice/api/Proposals/RejectProposal?id=" + pk).success(function() {
-                    getTranslationProposals();
-                }) /*.error(function(response) {
-                    console.log("response is void atm. TODO: error handling?");
-                })*/;
+        UmbClientMgr.openAngularModalWindow({
+            template: '/App_Plugins/SimpleTranslation/BackOffice/SimpleTranslation/partialViews/dialog.html',
+            dialogData: {
+                text: "Are you sure you want to reject this proposal?",
+                title: "Reject proposal",
+                okText: "Confirm",
+                okCallback: function() {
+                    $http.post("/umbraco/backoffice/api/Proposals/RejectProposal?id=" + pk).success(function() {
+                        getViewModel();
+                        UmbClientMgr.closeModalWindow();
+                    });
+                }
             }
         });
     }
-});
-
-// Umbraco 7.5 uses Angular 1.1.5. Better built-in filters were introduced later http://stackoverflow.com/a/29675847/5552144
-app.filter('utc', function() {
-    return function(val) {
-        var date = new Date(val);
-        return new Date(date.getUTCFullYear(),
-            date.getUTCMonth(),
-            date.getUTCDate(),
-            date.getUTCHours(),
-            date.getUTCMinutes(),
-            date.getUTCSeconds());
-    };
 });
