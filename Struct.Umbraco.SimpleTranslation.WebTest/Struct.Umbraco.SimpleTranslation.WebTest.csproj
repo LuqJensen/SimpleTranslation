@@ -391,6 +391,8 @@
   <ItemGroup>
     <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\ProposalsController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\PairsController.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\Models\ExportedTranslationTask.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\Models\XmlModel.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\SettingsDTO.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\TasksController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\UserSettingsController.cs" />
@@ -409,6 +411,7 @@
     <Compile Include="App_Plugins\SimpleTranslation\SimpleTranslationUsersTreeController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\SimpleTranslationTreeController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Startup.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\Utility\StringWriterWithEncoding.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Utility\UserRoleHelper.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\ViewModels\PairsView.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\ViewModels\ProposalsView.cs" />

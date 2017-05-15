@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web.Http;
+using System.Xml.Serialization;
 using Struct.Umbraco.SimpleTranslation.Models;
 using Struct.Umbraco.SimpleTranslation.ViewModels;
 using Umbraco.Core.Persistence;
@@ -48,6 +50,22 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
                 Languages = GetUserLanguages(),
                 IsEditor = _urh.IsEditor(UmbracoContext.Security.GetUserId())
             };
+        }
+
+        [HttpGet]
+        public string ExportStringsToXml(int langId)
+        {
+            var strings = _db.Fetch<TranslationText>(new Sql("select d.*, t.value from dbo.cmsDictionary d left outer join dbo.cmsLanguageText t on d.id=t.UniqueId AND t.languageId=@tag", new
+            {
+                tag = langId
+            }));
+
+            using (var s = new StringWriter())
+            {
+                var xs = new XmlSerializer(strings.GetType());
+                xs.Serialize(s, strings);
+                return s.ToString();
+            }
         }
 
         private ILookup<Guid, TranslationText> GetTranslations()
