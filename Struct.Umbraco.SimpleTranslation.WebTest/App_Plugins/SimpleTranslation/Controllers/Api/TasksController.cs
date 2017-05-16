@@ -227,7 +227,7 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
             {
                 tags1 = keys,
                 tag2 = languageId
-            }).Where(x => !string.IsNullOrWhiteSpace(x.Value)).ToDictionary(x => x.UniqueId, x => x);
+            }).ToDictionary(x => x.UniqueId, x => x);
 
             var newKeys = translations.Where(x => !existingTranslations.ContainsKey(x.UniqueId)).Select(x => new LanguageText
             {

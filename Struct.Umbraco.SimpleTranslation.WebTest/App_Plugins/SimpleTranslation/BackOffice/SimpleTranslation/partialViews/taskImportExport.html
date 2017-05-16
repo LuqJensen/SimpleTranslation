@@ -1,0 +1,38 @@
+﻿<div ng-controller="SimpleTranslation.ImportExport.Controller">
+    <div class="umb-panel-header umb-editor-header">
+        <div class="umb-panel-header-content-wrapper">
+            <div class="umb-panel-header-content">
+                <div class="umb-panel-header-left-side">
+                    <div class="umb-panel-header-title-wrapper">
+                        <div class="umb-panel-header-name">Import/Export Tasks</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="umb-panel-body umb-scrollable row-fluid">
+        <div class="umb-pane">
+            <div>
+                <div>
+                    <h4>Export Task to XML:</h4><br />
+                    <p>From Language:</p>
+                    <select ng-model="selectedFromLanguage" ng-options="option.id as option.languageCultureName for option in dialogData.languages"></select>
+                    <p>To Language:</p>
+                    <select ng-model="selectedToLanguage" ng-options="option.id as option.languageCultureName for option in dialogData.languages"></select><br />
+                    <a class="btn btn-primary" href="/umbraco/backoffice/api/Tasks/ExportTasksToXml?fromLangId={{selectedFromLanguage}}&toLangId={{selectedToLanguage}}" download>
+                        Download
+                    </a>
+                </div>
+                <br />
+                <div>
+                    <form id="uploadForm" ng-submit="uploadXml()" method="post">
+                        <h4 for="file">Upload Xml File:</h4><br/>
+                        <input class="btn btn-default" id="file" type="file" accept=".xml"/><br/><br />
+                        <input class="btn btn-primary" type="submit" value="Submit"/>
+                        <p class="error">{{ uploadError }}</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

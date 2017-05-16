@@ -305,9 +305,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\css\simpletranslation.css" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\taskImportExport.js" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\pairsNewProposal.js" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\pairs.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\partialViews\dialog.html" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\partialViews\taskImportExport.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\partialViews\pairsNewProposal.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\partialViews\taskProposals.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\proposals.html" />

@@ -7,6 +7,9 @@
                         <div class="umb-panel-header-name">Translation Tasks</div>
                     </div>
                 </div>
+                <div class="btn-toolbar umb-btn-toolbar">
+                    <a class="btn btn-primary" ng-click="openImportExportModul()">Import/Export Tasks</a>
+                </div>
             </div>
         </div>
     </div>
@@ -16,13 +19,6 @@
                 <i class="icon-search"></i>
                 <input type="text" placeholder="Type to search for keys" class="umb-search-field search-query search-input" ng-model="searchTerm"/>
             </div>
-            <a href="/umbraco/backoffice/api/Tasks/ExportTasksToXml?fromLangId=3&toLangId=6" download>test</a>
-            <form id="uploadForm" ng-submit="uploadXml()" method="post">
-                <label for="file">Upload Xml File:</label><br />
-                <input class="btn btn-default" id="file" type="file" accept=".xml" />
-                <input class="btn btn-primary" type="submit" value="Submit" />
-                <p class="error">{{ uploadError }}</p>
-            </form>
             <table class="table">
                 <thead>
                 <tr>
