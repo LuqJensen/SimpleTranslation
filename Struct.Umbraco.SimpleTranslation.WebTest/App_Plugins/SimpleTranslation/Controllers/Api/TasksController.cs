@@ -140,7 +140,7 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
             response.End();
         }
 
-        private ExportedTranslationTask[] ReadXml(XmlModel model)
+        private IEnumerable<ExportedTranslationTask> ReadXml(XmlModel model)
         {
             ExportedTranslationTask[] proposals;
 
@@ -152,6 +152,7 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
 
             var languages = proposals.Select(x => x.LanguageId).Distinct();
 
+            // The feature expects the xml file to contain keys for a single language, as it makes sense in practice.
             if (languages.Count() > 1)
             {
                 throw new HttpException("Invalid xml file. Expected file with single language.");
@@ -177,7 +178,8 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
                 throw new HttpException("Invalid xml file. File contains non existing keys.");
             }
 
-            return proposals;
+            // We dont want empty texts.
+            return proposals.Where(x => !string.IsNullOrWhiteSpace(x.TranslatedText));
         }
 
         [HttpPost]
@@ -186,7 +188,7 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
             if (!_urh.IsEditor(UmbracoContext.Security.GetUserId()))
                 return;
 
-            ExportedTranslationTask[] proposals = ReadXml(model);
+            IEnumerable<ExportedTranslationTask> proposals = ReadXml(model);
             List<TranslationProposal> data = new List<TranslationProposal>();
             var userId = UmbracoContext.Security.GetUserId();
 
@@ -216,31 +218,37 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
             if (!_urh.IsEditor(UmbracoContext.Security.GetUserId()))
                 return;
 
-            ExportedTranslationTask[] translations = ReadXml(model);
+            IEnumerable<ExportedTranslationTask> translations = ReadXml(model);
 
             var keys = translations.Select(x => x.UniqueId);
             var languageId = translations.First().LanguageId;
 
-            var existingKeys = _db.Fetch<LanguageText>("select * from dbo.cmsLanguageText where UniqueId IN (@tags1) AND languageId=@tag2", new
+            var existingTranslations = _db.Fetch<LanguageText>("select * from dbo.cmsLanguageText where UniqueId IN (@tags1) AND languageId=@tag2", new
             {
                 tags1 = keys,
                 tag2 = languageId
-            });
+            }).Where(x => !string.IsNullOrWhiteSpace(x.Value)).ToDictionary(x => x.UniqueId, x => x);
 
-            var keyDict = existingKeys.Select(x => x.UniqueId).ToImmutableHashSet();
-
-            var newKeys = translations.Where(x => !string.IsNullOrWhiteSpace(x.TranslatedText) && !keyDict.Contains(x.UniqueId)).Select(x => new LanguageText
+            var newKeys = translations.Where(x => !existingTranslations.ContainsKey(x.UniqueId)).Select(x => new LanguageText
             {
                 LanguageId = languageId,
                 UniqueId = x.UniqueId,
                 Value = x.TranslatedText
             });
 
-            _db.BulkInsertRecords(newKeys);
-
-            foreach (var v in existingKeys)
+            if (newKeys.Any())
             {
-                _db.Update(v);
+                _db.BulkInsertRecords(newKeys);
+            }
+
+            foreach (var translation in translations)
+            {
+                LanguageText existingTranslation;
+                if (!existingTranslations.TryGetValue(translation.UniqueId, out existingTranslation))
+                    continue;
+
+                existingTranslation.Value = translation.TranslatedText;
+                _db.Update(existingTranslation);
             }
 
 
