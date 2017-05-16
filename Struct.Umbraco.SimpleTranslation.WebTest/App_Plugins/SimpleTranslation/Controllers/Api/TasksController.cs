@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Http;
+using System.Xml;
 using System.Xml.Serialization;
 using Struct.Umbraco.SimpleTranslation.Models;
+using Struct.Umbraco.SimpleTranslation.Utility;
 using Struct.Umbraco.SimpleTranslation.ViewModels;
-using umbraco.presentation.translation;
 using Umbraco.Core.Persistence;
 using Umbraco.Web.WebApi;
-using Struct.Umbraco.SimpleTranslation.Utility;
 
 namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
 {
@@ -119,11 +120,15 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
                 v.TranslatedText = v.TranslatedText ?? " ";
             }
 
+            var service = ApplicationContext.Services.LocalizationService;
+            var fromLanguage = service.GetLanguageById(fromLangId).CultureName;
+            var toLanguage = service.GetLanguageById(toLangId).CultureName;
+
             // Clear any response data and add header for filetransfer and set content type.
             var response = UmbracoContext.HttpContext.Response;
             response.Clear();
             response.Buffer = true;
-            response.AddHeader("content-disposition", "attachment;filename=simpleTranslationTasks.xml");
+            response.AddHeader("content-disposition", $"attachment;filename=SimpleTranslation Tasks {fromLanguage} to {toLanguage} {DateTime.Today.ToString("dd-MM-yy")}.xml");
             response.ContentType = "text/xml";
 
             // Perform the serialization to the Http outputstream.
@@ -135,41 +140,59 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
             response.End();
         }
 
+        private ExportedTranslationTask[] ReadXml(XmlModel model)
+        {
+            ExportedTranslationTask[] proposals;
+
+            using (var s = new StringReader(model.Value))
+            {
+                var xs = new XmlSerializer(typeof(ExportedTranslationTask[]));
+                proposals = (ExportedTranslationTask[])xs.Deserialize(s);
+            }
+
+            var languages = proposals.Select(x => x.LanguageId).Distinct();
+
+            if (languages.Count() > 1)
+            {
+                throw new HttpException("Invalid xml file. Expected file with single language.");
+            }
+
+            var languageExists = _db.Fetch<int>("select 1 from dbo.umbracoLanguage where id=@tag", new
+            {
+                tag = languages.First()
+            }).Any();
+
+            if (!languageExists)
+            {
+                throw new HttpException("Invalid xml file. File contains invalid language.");
+            }
+
+            var validKeys = _db.Fetch<int>("select 1 from dbo.cmsDictionary where id IN (@tags)", new
+            {
+                tags = proposals.Select(x => x.UniqueId).Distinct()
+            });
+
+            if (validKeys.Count != proposals.Length)
+            {
+                throw new HttpException("Invalid xml file. File contains non existing keys.");
+            }
+
+            return proposals;
+        }
+
         [HttpPost]
         public void ImportProposalsFromXml(XmlModel model)
         {
             if (!_urh.IsEditor(UmbracoContext.Security.GetUserId()))
                 return;
 
-            IEnumerable<ExportedTranslationTask> proposals;
-
-            using (var s = new StringReader(model.Value))
-            {
-                var xs = new XmlSerializer(typeof(ExportedTranslationTask[]));
-                proposals = (IEnumerable<ExportedTranslationTask>)xs.Deserialize(s);
-            }
-/*
-                        var invalidKeys = _db.Fetch<int>("select 1 from dbo.cmsDictionary where id NOT IN (@tags)", new
-                        {
-                            tags = proposals.Select(x => x.UniqueId).Distinct()
-                        });
-            
-                        var invalidLanguages = _db.Fetch<int>("select 1 from dbo.umbracoLanguage where id NOT IN (@tags)", new
-                        {
-                            tags = proposals.Select(x => x.LanguageId).Distinct()
-                        });
-            
-                        if (invalidKeys.Any() || invalidLanguages.Any() || proposals.Select(x => x.LanguageId).Distinct().Count() > 1)
-                        {
-                            throw new HttpException("Invalid xml file.");
-                        }*/
-
+            ExportedTranslationTask[] proposals = ReadXml(model);
             List<TranslationProposal> data = new List<TranslationProposal>();
             var userId = UmbracoContext.Security.GetUserId();
 
             foreach (var p in proposals)
             {
-                if (p.TranslatedText == null)
+                if (string.IsNullOrWhiteSpace(p.TranslatedText))
                     continue;
 
                 data.Add(new TranslationProposal
@@ -181,8 +204,81 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
                     Value = p.TranslatedText
                 });
             }
+            if (data.Any())
+            {
+                _db.BulkInsertRecords(data);
+            }
+        }
 
-            _db.BulkInsertRecords(data);
+        [HttpPost]
+        public void ImportTranslationsFromXml(XmlModel model)
+        {
+            if (!_urh.IsEditor(UmbracoContext.Security.GetUserId()))
+                return;
+
+            ExportedTranslationTask[] translations = ReadXml(model);
+
+            var keys = translations.Select(x => x.UniqueId);
+            var languageId = translations.First().LanguageId;
+
+            var existingKeys = _db.Fetch<LanguageText>("select * from dbo.cmsLanguageText where UniqueId IN (@tags1) AND languageId=@tag2", new
+            {
+                tags1 = keys,
+                tag2 = languageId
+            });
+
+            var keyDict = existingKeys.Select(x => x.UniqueId).ToImmutableHashSet();
+
+            var newKeys = translations.Where(x => !string.IsNullOrWhiteSpace(x.TranslatedText) && !keyDict.Contains(x.UniqueId)).Select(x => new LanguageText
+            {
+                LanguageId = languageId,
+                UniqueId = x.UniqueId,
+                Value = x.TranslatedText
+            });
+
+            _db.BulkInsertRecords(newKeys);
+
+            foreach (var v in existingKeys)
+            {
+                _db.Update(v);
+            }
+
+
+            /*var service = ApplicationContext.Services.LocalizationService;
+
+            foreach (var translation in translations)
+            {
+                if (string.IsNullOrWhiteSpace(translation.TranslatedText))
+                    continue;
+
+                IDictionaryItem idi = service.GetDictionaryItemById(translation.UniqueId);
+                var existingTranslation = idi.Translations.FirstOrDefault(x => x.LanguageId == language.Id);
+
+                if (existingTranslation == null)
+                {
+                    var existingTranslations = idi.Translations.ToList();
+                    existingTranslations.Add(new DictionaryTranslation(language, translation.TranslatedText, translation.UniqueId));
+                    idi.Translations = existingTranslations;
+                }
+                else
+                {
+                    existingTranslation.Value = translation.TranslatedText;
+                }
+                service.Save(idi);
+            }*/
+
+
+            _db.Delete<TranslationProposal>(new Sql().Where("id IN (@tags1) AND languageId=@tag2", new
+            {
+                tags1 = keys,
+                tag2 = languageId
+            }));
+
+            _db.Delete<TranslationTask>(new Sql().Where("id IN (@tags1) AND languageId=@tag2", new
+            {
+                tags1 = keys,
+                tag2 = languageId
+            }));
         }
 
         [HttpGet]

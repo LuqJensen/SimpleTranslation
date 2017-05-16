@@ -2,7 +2,7 @@
 using Struct.Umbraco.SimpleTranslation.Models;
 using Umbraco.Core.Persistence;
 
-namespace Struct.Umbraco.SimpleTranslation
+namespace Struct.Umbraco.SimpleTranslation.Utility
 {
     public class UserRoleHelper
     {
