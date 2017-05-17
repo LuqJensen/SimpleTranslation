@@ -19,3 +19,11 @@ a.link { color: blue; }
 }
 
 p.error { color: red;}
+
+p.succes {
+    color: #46a546;
+}
+
+p.waiting {
+    color: #008080;
+}

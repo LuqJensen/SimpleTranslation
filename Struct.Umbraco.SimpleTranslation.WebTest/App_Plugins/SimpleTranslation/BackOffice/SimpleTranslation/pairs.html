@@ -7,10 +7,10 @@
                         <div class="umb-panel-header-name">Pairs</div>
                     </div>
                 </div>
-                <div class="btn-toolbar umb-btn-toolbar">
+                <div class="btn-toolbar umb-btn-toolbar" ng-show="isEditor">
                     <div class="message">
                         <span>{{ sendMessage }}</span>
-                        <a class="btn btn-primary btn" ng-click="sendToTranslation()" ng-show="isEditor">Send To Translation</a>
+                        <a class="btn btn-primary btn" ng-click="sendToTranslation()">Send To Translation</a>
                     </div>
                 </div>
             </div>
