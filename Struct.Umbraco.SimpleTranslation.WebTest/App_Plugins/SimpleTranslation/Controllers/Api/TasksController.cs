@@ -189,14 +189,16 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
                 return;
 
             IEnumerable<ExportedTranslationTask> proposals = ReadXml(model);
+
+            // Nothing to process.
+            if (!proposals.Any())
+                return;
+
             List<TranslationProposal> data = new List<TranslationProposal>();
             var userId = UmbracoContext.Security.GetUserId();
 
             foreach (var p in proposals)
             {
-                if (string.IsNullOrWhiteSpace(p.TranslatedText))
-                    continue;
-
                 data.Add(new TranslationProposal
                 {
                     LanguageId = p.LanguageId,
@@ -219,6 +221,10 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
                 return;
 
             IEnumerable<ExportedTranslationTask> translations = ReadXml(model);
+
+            // Nothing to process.
+            if (!translations.Any())
+                return;
 
             var keys = translations.Select(x => x.UniqueId);
             var languageId = translations.First().LanguageId;
@@ -250,31 +256,6 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
                 existingTranslation.Value = translation.TranslatedText;
                 _db.Update(existingTranslation);
             }
-
-
-            /*var service = ApplicationContext.Services.LocalizationService;
-
-            foreach (var translation in translations)
-            {
-                if (string.IsNullOrWhiteSpace(translation.TranslatedText))
-                    continue;
-
-                IDictionaryItem idi = service.GetDictionaryItemById(translation.UniqueId);
-                var existingTranslation = idi.Translations.FirstOrDefault(x => x.LanguageId == language.Id);
-
-                if (existingTranslation == null)
-                {
-                    var existingTranslations = idi.Translations.ToList();
-                    existingTranslations.Add(new DictionaryTranslation(language, translation.TranslatedText, translation.UniqueId));
-                    idi.Translations = existingTranslations;
-                }
-                else
-                {
-                    existingTranslation.Value = translation.TranslatedText;
-                }
-                service.Save(idi);
-            }*/
-
 
             _db.Delete<TranslationProposal>(new Sql().Where("id IN (@tags1) AND languageId=@tag2", new
             {
