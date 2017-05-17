@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Formatting;
+using Struct.Umbraco.SimpleTranslation.Utility;
 using Umbraco.Web.Models.Trees;
 using Umbraco.Web.Mvc;
 using Umbraco.Web.Trees;

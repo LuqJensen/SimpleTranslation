@@ -50,4 +50,15 @@ app.controller("SimpleTranslation.Tasks.Controller", function($scope, $http) {
             }
         });
     }
+
+    $scope.openImportExportModul = function () {
+        event.preventDefault();
+
+        UmbClientMgr.openAngularModalWindow({
+            template: '/App_Plugins/SimpleTranslation/BackOffice/SimpleTranslation/partialViews/taskImportExport.html',
+            dialogData: {
+                languages: $scope.languages
+            }
+        });
+    }
 });

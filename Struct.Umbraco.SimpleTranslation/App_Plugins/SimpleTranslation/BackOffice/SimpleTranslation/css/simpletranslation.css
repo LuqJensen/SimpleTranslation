@@ -17,3 +17,13 @@ a.link { color: blue; }
     font-weight: bold;
     text-align: right;
 }
+
+p.error { color: red;}
+
+p.succes {
+    color: #46a546;
+}
+
+p.waiting {
+    color: #008080;
+}

@@ -261,7 +261,9 @@
     <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\ProposalsController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\TasksController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\userSettingsController.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\Models\ExportedTranslationTask.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\Language.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\Models\LanguageText.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\Pair.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\PairProposals.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\PairTranslations.cs" />
@@ -274,6 +276,7 @@
     <Compile Include="App_Plugins\SimpleTranslation\Models\User.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\UserLanguage.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\UserRole.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\Models\XmlModel.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\SimpleTranslationTreeController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\SimpleTranslationUsersTreeController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Startup.cs" />
@@ -300,12 +303,14 @@
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\pairs.js" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\pairsNewProposal.js" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\proposals.js" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\taskImportExport.js" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\taskProposals.js" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\tasks.js" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\js\userSettings.js" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\pairs.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\partialViews\dialog.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\partialViews\pairsNewProposal.html" />
+    <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\partialViews\taskImportExport.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\partialViews\taskproposals.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\proposals.html" />
     <Content Include="App_Plugins\SimpleTranslation\BackOffice\SimpleTranslation\tasks.html" />
