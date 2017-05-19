@@ -260,10 +260,9 @@
     <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\PairsController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\ProposalsController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\TasksController.cs" />
-    <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\userSettingsController.cs" />
+    <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\UserSettingsController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\ExportedTranslationTask.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\Language.cs" />
-    <Compile Include="App_Plugins\SimpleTranslation\Models\LanguageText.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\Pair.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\PairProposals.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\PairTranslations.cs" />

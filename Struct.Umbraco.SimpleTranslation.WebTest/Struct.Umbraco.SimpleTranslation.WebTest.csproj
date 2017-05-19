@@ -394,7 +394,6 @@
     <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\ProposalsController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\PairsController.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\ExportedTranslationTask.cs" />
-    <Compile Include="App_Plugins\SimpleTranslation\Models\LanguageText.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\XmlModel.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Models\SettingsDTO.cs" />
     <Compile Include="App_Plugins\SimpleTranslation\Controllers\Api\TasksController.cs" />

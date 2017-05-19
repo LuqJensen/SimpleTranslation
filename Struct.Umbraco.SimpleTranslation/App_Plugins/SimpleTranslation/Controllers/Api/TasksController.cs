@@ -91,7 +91,7 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
                 }, out p);
                 v.LatestPersonalProposal = p;
 
-                v.CurrentTranslations = currentTranslations[v.UniqueId].ToDictionary(x => x.LangId, x => x.Value);
+                v.CurrentTranslations = currentTranslations[v.UniqueId].ToDictionary(x => x.LanguageId, x => x.Value);
             }
 
             model.Tasks = tasks;
@@ -226,13 +226,13 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
             var keys = translations.Select(x => x.UniqueId);
             var languageId = translations.First().LanguageId;
 
-            var existingTranslations = _db.Fetch<LanguageText>("select * from dbo.cmsLanguageText where UniqueId IN (@tags1) AND languageId=@tag2", new
+            var existingTranslations = _db.Fetch<TranslationText>("select * from dbo.cmsLanguageText where UniqueId IN (@tags1) AND languageId=@tag2", new
             {
                 tags1 = keys,
                 tag2 = languageId
             }).ToDictionary(x => x.UniqueId, x => x);
 
-            var newKeys = translations.Where(x => !existingTranslations.ContainsKey(x.UniqueId)).Select(x => new LanguageText
+            var newKeys = translations.Where(x => !existingTranslations.ContainsKey(x.UniqueId)).Select(x => new TranslationText
             {
                 LanguageId = languageId,
                 UniqueId = x.UniqueId,
@@ -246,7 +246,7 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
 
             foreach (var translation in translations)
             {
-                LanguageText existingTranslation;
+                TranslationText existingTranslation;
                 if (!existingTranslations.TryGetValue(translation.UniqueId, out existingTranslation))
                     continue;
 

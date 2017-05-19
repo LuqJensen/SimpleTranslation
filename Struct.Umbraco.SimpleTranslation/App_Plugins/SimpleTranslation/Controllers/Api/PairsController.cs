@@ -39,7 +39,7 @@ namespace Struct.Umbraco.SimpleTranslation.Controllers.Api
 
             foreach (var v in pairs)
             {
-                v.TranslationTexts = translations[v.UniqueId].ToDictionary(x => x.LangId, x => x.Value);
+                v.TranslationTexts = translations[v.UniqueId].ToDictionary(x => x.LanguageId, x => x.Value);
                 v.TranslationTasks = tasks[v.UniqueId].ToDictionary(x => x.LanguageId, x => true);
             }
 
